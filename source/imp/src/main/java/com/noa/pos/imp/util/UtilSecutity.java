@@ -1,4 +1,4 @@
-package com.noa.pos.imp.security;
+package com.noa.pos.imp.util;
 
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.openssl.PEMDecryptorProvider;
@@ -16,8 +16,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.sql.Clob;
-import java.sql.SQLException;
-import java.util.logging.Level;
 
 public class UtilSecutity {
 

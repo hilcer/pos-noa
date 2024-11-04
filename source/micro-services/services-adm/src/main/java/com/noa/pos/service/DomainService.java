@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface DomainService {
 
-    public DomainDto saveUser(DomainDto user);
+    public DomainDto saveDomain(DomainDto user);
 
     public List<DomainDto> getAllUsers();
 

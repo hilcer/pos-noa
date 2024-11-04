@@ -20,7 +20,6 @@ public class UserServiceImp implements UserService {
         this.userRepository = userRepository;
     }
 
-
     @Override
     public UserDto saveUser(UserDto userDto) {
         var user = dtoToUser(userDto);
