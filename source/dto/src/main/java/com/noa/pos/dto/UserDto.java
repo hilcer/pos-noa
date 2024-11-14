@@ -1,5 +1,6 @@
 package com.noa.pos.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.util.Date;
@@ -13,16 +14,21 @@ public class UserDto {
 
 	private Integer userId;
 
+	@NotBlank
 	private String user;
 
+	@NotBlank
 	private String password;
 
 	private String mobileNumber;
 
+	@NotBlank
 	private String fullName;
 
+	@NotBlank
 	private String lastName;
 
+	@NotBlank
 	private String email;
 
 	private String address;

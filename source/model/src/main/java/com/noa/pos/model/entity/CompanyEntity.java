@@ -15,25 +15,16 @@ import java.util.Date;
 @NoArgsConstructor
 @Getter
 @Setter
-@Entity
-public class Domain {
+@Entity(name = "company")
+public class CompanyEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer domainId;
-
-	private String groupDom;
-
-	private String name;
-
-	private String value;
-
-	private String description;
-
+	private Integer companyId;
+	private String nameCompany;
+	private String nit;
 	private Boolean enabled;
-
 	private String lastUser;
-
 	private Date lastTime;
 
 }

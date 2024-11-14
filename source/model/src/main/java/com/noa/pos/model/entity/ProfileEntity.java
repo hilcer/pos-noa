@@ -4,14 +4,13 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Timestamp;
-import java.util.Objects;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@Entity
-public class Profile {
+@Entity(name = "profile")
+public class ProfileEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Integer profileId;

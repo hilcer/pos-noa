@@ -10,6 +10,8 @@ public interface UserService {
 
     public UserDto getUserByEmail(String email);
 
+    public UserDto getUserByUser(String user);
+
     public List<UserDto> getUsers(String role);
 
     public List<UserDto> getAllUsers();

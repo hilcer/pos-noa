@@ -9,39 +9,54 @@
 <section>
     <div class="container mt-5" style="max-width: 720px">
         <div class="grid grid-cols-5 grid-rows-5 gap-4 p-3">
-            <div>
-                <button type="submit" class="btn bg-primary text-white"><i class="fa-solid fa-plus"></i>Agregar Producto</button>
-            </div>
+            <form action="/product/addproduct" method="get">
+                <div>
+                    <button type="submit" class="btn bg-primary text-white"><i class="fa-solid fa-plus"></i>Agregar
+                        Producto
+                    </button>
+                </div>
+            </form>
         </div>
-        <table class="table">
-            <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">First</th>
-                <th scope="col">Last</th>
-                <th scope="col">Handle</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <th scope="row">1</th>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>@mdo</td>
-            </tr>
-            <tr>
-                <th scope="row">2</th>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-            </tr>
-            <tr>
-                <th scope="row">3</th>
-                <td colspan="2">Larry the Bird</td>
-                <td>@twitter</td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="card card-sh">
+            <div class="card-header text-center fs-4">
+                <p class="fs-4">Lista de productos</p>
+                <th:block th:if="${session.succMsg}">
+                    <p class="text-succes fw-bold">[[${succMsg}]]</p>
+                </th:block>
+                <th:block th:if="${session.errorMsg}">
+                    <p class="text-danger fw-bold">[[${errorMsg}]]</p>
+                </th:block>
+            </div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">First</th>
+                    <th scope="col">Last</th>
+                    <th scope="col">Handle</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th scope="row">1</th>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td>@mdo</td>
+                </tr>
+                <tr>
+                    <th scope="row">2</th>
+                    <td>Jacob</td>
+                    <td>Thornton</td>
+                    <td>@fat</td>
+                </tr>
+                <tr>
+                    <th scope="row">3</th>
+                    <td colspan="2">Larry the Bird</td>
+                    <td>@twitter</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </section>
 

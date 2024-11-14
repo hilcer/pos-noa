@@ -1,9 +1,6 @@
 package com.noa.pos.model.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +13,8 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
-public class User {
+@Table(name = "user", uniqueConstraints = @UniqueConstraint(columnNames={"user"}, name = "UX_USER"))
+public class UserEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,10 +1,11 @@
 package com.noa.pos.service.imp;
 
 import com.noa.pos.dto.UserDto;
-import com.noa.pos.model.entity.User;
+import com.noa.pos.model.entity.UserEntity;
 import com.noa.pos.model.repository.UserRepository;
 import com.noa.pos.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -14,10 +15,12 @@ import java.util.List;
 public class UserServiceImp implements UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    UserServiceImp(UserRepository userRepository) {
+    UserServiceImp(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -25,12 +28,24 @@ public class UserServiceImp implements UserService {
         var user = dtoToUser(userDto);
         user.setLastUser("ADM");
         user.setLastTime(new Date());
+        user.setEnabled(true);
+        user.setProfileId(1);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userToDto(userRepository.save(user));
     }
 
     @Override
     public UserDto getUserByEmail(String email) {
         return null;
+    }
+
+    @Override
+    public UserDto getUserByUser(String user) {
+        var entity = userRepository.findByUser(user);
+
+        if (entity == null) return null;
+
+        return userToDto(entity);
     }
 
     @Override
@@ -53,8 +68,8 @@ public class UserServiceImp implements UserService {
         return null;
     }
 
-    private User dtoToUser(UserDto dto) {
-        User user = new User();
+    private UserEntity dtoToUser(UserDto dto) {
+        UserEntity user = new UserEntity();
         user.setUser(dto.getUser());
         user.setPassword(dto.getPassword());
         user.setMobileNumber(dto.getMobileNumber());
@@ -75,7 +90,7 @@ public class UserServiceImp implements UserService {
         return user;
     }
 
-    private UserDto userToDto(User user) {
+    private UserDto userToDto(UserEntity user) {
         UserDto userDto = new UserDto();
         userDto.setUserId(user.getUserId());
         userDto.setUser(user.getUser());
