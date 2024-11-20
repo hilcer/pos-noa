@@ -13,7 +13,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>pos-noa</name>
-	<description>Punto de venta QR</description>
+	<description>Punto de venta</description>
 	<url/>
 	<licenses>
 		<license/>

@@ -50,7 +50,8 @@ public class SecurityConfig {
                 ).formLogin(form-> form.loginPage("/home/login")
                         .loginProcessingUrl("/user/signin")
                         .defaultSuccessUrl("/venta/"))
-                .logout(logout -> logout.permitAll());
+                .logout(logout -> logout.logoutUrl("/home/logout").invalidateHttpSession(true)
+                        .clearAuthentication(true).permitAll());
 //                .exceptionHandling(ex->ex.authenticationEntryPoint(point))
 //                .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 ;
