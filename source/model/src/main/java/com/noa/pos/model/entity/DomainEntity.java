@@ -21,19 +21,12 @@ public class DomainEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer domainId;
-
 	private String groupDom;
-
 	private String name;
-
 	private String value;
-
 	private String description;
-
 	private Boolean enabled;
-
 	private String lastUser;
-
 	private Date lastTime;
-
+	private Integer companyId;
 }

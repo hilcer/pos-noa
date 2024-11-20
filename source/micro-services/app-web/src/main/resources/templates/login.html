@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeLeaf.org"
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
       th:replace="~{base::Layout(~{::section})}">
 <head>
     <meta charset="UTF-8">
@@ -13,6 +13,12 @@
                 <div class="card shadow p-3 mb-5 gb-body-tertiary rounded">
                     <div class="card-header">
                         <p class="fs-4 text-center">Iniciar sessión</p>
+                        <div th:if="${param.error}" class="alert alert-danger">
+                            Usuario o contraseña invalida
+                        </div>
+                        <div th:if="${param.logout}" class="alert alert-success">
+                            Session cerrada
+                        </div>
                     </div>
                     <div class="card-body">
                         <form action="/user/signin" method="post">

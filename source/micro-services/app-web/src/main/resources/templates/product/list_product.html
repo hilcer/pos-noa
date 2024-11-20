@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeLeaf.org"
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
       th:replace="~{base::Layout(~{::section})}">
 <head>
     <meta charset="UTF-8">
@@ -20,8 +20,8 @@
         <div class="card card-sh">
             <div class="card-header text-center fs-4">
                 <p class="fs-4">Lista de productos</p>
-                <th:block th:if="${session.succMsg}">
-                    <p class="text-succes fw-bold">[[${succMsg}]]</p>
+                <th:block th:if="${session.succesMsg}">
+                    <p class="text-succes fw-bold">[[${succesMsg}]]</p>
                 </th:block>
                 <th:block th:if="${session.errorMsg}">
                     <p class="text-danger fw-bold">[[${errorMsg}]]</p>
@@ -31,28 +31,27 @@
                 <thead>
                 <tr>
                     <th scope="col">#</th>
-                    <th scope="col">First</th>
-                    <th scope="col">Last</th>
-                    <th scope="col">Handle</th>
+                    <th scope="col">Codigo</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Categoria</th>
+                    <th scope="col">Precio</th>
+                    <th scope="col">Habilitado</th>
+                    <th scope="col">Imagen</th>
+                    <th scope="col">Acciones</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                </tr>
-                <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                </tr>
-                <tr>
-                    <th scope="row">3</th>
-                    <td colspan="2">Larry the Bird</td>
-                    <td>@twitter</td>
+                <tr th:each="p,c:${products}">
+                    <th scope="row">[[${c.count}]]</th>
+                    <td>[[${p.code}]]</td>
+                    <td>[[${p.name}]]</td>
+                    <td>[[${p.productType}]]</td>
+                    <td>[[${p.price}]]</td>
+                    <td>[[${p.enabled}]]</td>
+                    <td><img th:src="@{'/img/product_img/'+${p.image}}" width="50px" height="50px"></td>
+                    <td>
+                        <a th:href="@{'/product/editproduct/'+${p.productId}}" class="btn btn-sm btn-secondary">Editar</a>
+                    </td>
                 </tr>
                 </tbody>
             </table>

@@ -1,9 +1,6 @@
 package com.noa.pos.model.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +12,8 @@ import java.util.Date;
 @NoArgsConstructor
 @Getter
 @Setter
-@Entity(name = "company")
+@Table( name = "company", uniqueConstraints = @UniqueConstraint(columnNames = {"nit"}))
+@Entity
 public class CompanyEntity {
 
 	@Id

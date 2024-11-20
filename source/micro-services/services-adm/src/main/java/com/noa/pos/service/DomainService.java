@@ -8,6 +8,9 @@ public interface DomainService {
 
     public DomainDto saveDomain(DomainDto user);
 
-    public List<DomainDto> getAllUsers();
+    List<DomainDto> getAllDomains();
 
+    public List<DomainDto> getGropupDom(String group);
+
+    DomainDto getDomainGroupAndName(String domainGroup, String domainName);
 }

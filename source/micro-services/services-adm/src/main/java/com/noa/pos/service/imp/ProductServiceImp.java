@@ -28,15 +28,90 @@ public class ProductServiceImp implements ProductService {
     }
 
     @Override
+    public ProductDto mergeProduct(ProductDto user) {
+
+        var entity = productRepository.findById(user.getProductId()).orElse(null);
+
+        mrgeDtoToEntity(user, entity);
+        entity = productRepository.save(entity);
+        return entityToDto(entity);
+    }
+
+    @Override
     public Boolean existProductByNamw(String name) {
 
         var entity = productRepository.findByName(name);
         return entity != null;
     }
 
+    @Override
+    public ProductDto getById(Integer id) {
+
+        var entity = productRepository.findById(id).orElse(null);
+        if (entity == null) {
+            return null;
+        }
+
+        return entityToDto(entity);
+    }
+
+    public String getCode(String name, String productType) {
+
+        if (name.length() <= 4) {
+            return name.toUpperCase() + productType.substring(0, 2).toUpperCase();
+        }
+
+        var withOutSpace = name.trim();
+        var listWords = withOutSpace.split(" ");
+
+        switch (listWords.length) {
+            case 1:
+                return name.substring(0, 4).toUpperCase() + productType.substring(0, 2).toUpperCase();
+            case 2:
+                return listWords[0].substring(0, 2).toUpperCase() + listWords[1].substring(0, 2).toUpperCase() + productType.substring(0, 2).toUpperCase();
+            case 3: {
+                return listWords[0].substring(0, 2).toUpperCase() +
+                        listWords[1].substring(0, 1).toUpperCase() +
+                        listWords[2].substring(0, 1).toUpperCase() +
+                        productType.substring(0, 2).toUpperCase();
+            }
+            case 4: {
+                return listWords[0].substring(0, 2).toUpperCase() +
+                        listWords[1].substring(0, 1).toUpperCase() +
+                        listWords[2].substring(0, 1).toUpperCase() +
+                        productType.substring(0, 2).toUpperCase();
+            }
+            default: {
+                return listWords[0].substring(0, 2).toUpperCase() +
+                        listWords[1].substring(0, 1).toUpperCase() +
+                        listWords[2].substring(0, 1).toUpperCase() +
+                        productType.substring(0, 2).toUpperCase();
+            }
+        }
+    }
+
     private ProductEntity dtoToEntity(ProductDto dto) {
         var entity = new ProductEntity();
         entity.setCompanyId(dto.getCompanyId());
+        entity.setSucursalId(dto.getSucursalId());
+        entity.setCode(dto.getCode());
+        entity.setName(dto.getName());
+        entity.setDescription(dto.getDescription());
+        entity.setPrice(dto.getPrice());
+        entity.setProductType(dto.getProductType());
+        entity.setImage(dto.getImage());
+        entity.setStock(dto.getStock());
+        entity.setMarca(dto.getMarca());
+        entity.setModelo(dto.getModelo());
+        entity.setColor(dto.getColor());
+        entity.setInitStamp(dto.getInitStamp());
+        entity.setEnabled(dto.getEnabled());
+        entity.setLastUser(dto.getLastUser());
+        entity.setLastTime(dto.getLastTime());
+        return entity;
+    }
+
+    private ProductEntity mrgeDtoToEntity(ProductDto dto, ProductEntity entity) {
         entity.setSucursalId(dto.getSucursalId());
         entity.setCode(dto.getCode());
         entity.setName(dto.getName());
@@ -79,6 +154,6 @@ public class ProductServiceImp implements ProductService {
 
     @Override
     public List<ProductDto> getAllProducts() {
-        return List.of();
+        return productRepository.findAll().stream().parallel().map(this::entityToDto).toList();
     }
 }
