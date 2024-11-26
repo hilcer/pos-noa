@@ -1,9 +1,6 @@
 package com.noa.pos.model.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,18 +12,19 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 @Setter
-@Entity(name = "domain")
-public class DomainEntity {
+@Table( name = "sucursal", uniqueConstraints = @UniqueConstraint(columnNames = {"sucursalId", "companyId"}))
+@Entity
+public class SucursalEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer domainId;
-	private String groupDom;
-	private String name;
-	private String value;
-	private String description;
+	private Integer sucursalId;
+	private Integer companyId;
+	private String nameSucursal;
+	private String sucursalDescription;
+	private String sucursalNit;
 	private Boolean enabled;
 	private String lastUser;
 	private LocalDate lastTime;
-	private Integer companyId;
+
 }

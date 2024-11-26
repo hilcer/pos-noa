@@ -9,24 +9,32 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@Entity(name = "domain")
-public class DomainEntity {
+@Entity(name = "order_sales_detail")
+public class OrderSalesDetailEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer domainId;
-	private String groupDom;
-	private String name;
-	private String value;
+	private Long orderSalesDetailId;
+	private Long orderSalesId;
+	private String productId;
+	private BigDecimal price;
 	private String description;
-	private Boolean enabled;
+	private Integer quantity;
 	private String lastUser;
 	private LocalDate lastTime;
-	private Integer companyId;
 }
+
+
+//id_detalleventa int not null primary key auto_increment,
+//id_venta  int not null,
+//id_producto int not null,
+//monto decimal(10,2),
+//cantidad varchar(30),
+//fecha_registro datetime not null

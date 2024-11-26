@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,6 +23,6 @@ public class CompanyEntity {
 	private String nit;
 	private Boolean enabled;
 	private String lastUser;
-	private Date lastTime;
+	private LocalDate lastTime;
 
 }

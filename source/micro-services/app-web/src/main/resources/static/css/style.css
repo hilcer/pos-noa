@@ -11,3 +11,23 @@
 .error {
 	color: red;
 }
+
+*{
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+.container-noa .btn-float-noa .btn-noa{
+	text-decoration: none;
+	font-size: 25px;
+	font-weight: bold;
+	letter-spacing: 2px;
+	background-color: darkgoldenrod;
+	padding: 10px 20px;
+	color: white;
+	border-radius: 20px;
+	position: fixed;
+	right: 40px;
+	bottom: 40px;
+}

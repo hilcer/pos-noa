@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -27,7 +27,7 @@ public class UserServiceImp implements UserService {
     public UserDto saveUser(UserDto userDto) {
         var user = dtoToUser(userDto);
         user.setLastUser("ADM");
-        user.setLastTime(new Date());
+        user.setLastTime(LocalDate.now());
         user.setEnabled(true);
         user.setProfileId(1);
         user.setPassword(passwordEncoder.encode(user.getPassword()));

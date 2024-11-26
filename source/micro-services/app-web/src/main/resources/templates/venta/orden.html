@@ -12,7 +12,7 @@
         <br>
         <div class="table-responsive">
             <div class="card-header text-center fs-4">
-                <p class="fs-4">Platos y refrescos</p>
+                <p class="fs-4">Orden</p>
                 <th:block th:if="${session.succesMsg}">
                     <p class="text-succes fw-bold">[[${succesMsg}]]</p>
                 </th:block>
@@ -20,39 +20,20 @@
                     <p class="text-danger fw-bold">[[${errorMsg}]]</p>
                 </th:block>
             </div>
-            <table class="table">
+            <table class="table" id="preorden">
                 <thead>
                 <tr>
+                    <th scope="col">Imagen</th>
                     <th scope="col">Nombre</th>
                     <th scope="col">Precio</th>
-                    <th scope="col">Imagen</th>
                     <th scope="col">Acciones</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="p,c:${products}"
-                    th:product-id="${p.productId}"
-                    th:name="${p.name}"
-                    th:price="${p.price}"
-                    th:image="${p.image}">
-                    <td>[[${p.name}]]</td>
-                    <td>Bs[[${p.price}]]</td>
-                    <td><img th:src="@{'/img/product_img/'+${p.image}}" width="50px" height="50px"></td>
-                    <td>
-                        <a onclick="quitarProducto(this)"
-                           class="btn btn-sm btn-danger"> - </a>
-                        <a onclick="agregarProducto(this)"
-                           class="btn btn-sm btn-success"> + </a>
-                    </td>
+                <tr>
                 </tr>
                 </tbody>
             </table>
-        </div>
-
-        <div class="container-noa">
-            <div class="btn-float-noa" id="detailproduct" style="display: none;">
-                <a class="btn-noa" id="detailproduct-a" href="/venta/orden">Pagar</a>
-            </div>
         </div>
     </div>
 </section>

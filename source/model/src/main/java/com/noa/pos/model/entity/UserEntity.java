@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,10 +32,10 @@ public class UserEntity {
 	private Integer profileId;
 	private Boolean enabled;
 	private Integer failedAttempt;
-	private Date lockTime;
+	private LocalDate lockTime;
 	private String resetToken;
 	private String lastUser;
-	private Date lastTime;
+	private LocalDate lastTime;
 	private Integer companyId;
 
 }

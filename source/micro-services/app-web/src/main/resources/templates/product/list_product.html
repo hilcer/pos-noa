@@ -17,15 +17,9 @@
                 </div>
             </form>
         </div>
-        <div class="card card-sh">
+        <div class="table-responsive">
             <div class="card-header text-center fs-4">
                 <p class="fs-4">Lista de productos</p>
-                <th:block th:if="${session.succesMsg}">
-                    <p class="text-succes fw-bold">[[${succesMsg}]]</p>
-                </th:block>
-                <th:block th:if="${session.errorMsg}">
-                    <p class="text-danger fw-bold">[[${errorMsg}]]</p>
-                </th:block>
             </div>
             <table class="table">
                 <thead>

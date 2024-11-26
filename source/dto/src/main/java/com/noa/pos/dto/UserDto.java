@@ -3,7 +3,7 @@ package com.noa.pos.dto;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -45,12 +45,12 @@ public class UserDto {
 
 	private Integer failedAttempt;
 
-	private Date lockTime;
+	private LocalDate lockTime;
 
 	private String resetToken;
 
 	private String lastUser;
 
-	private Date lastTime;
+	private LocalDate lastTime;
 
 }

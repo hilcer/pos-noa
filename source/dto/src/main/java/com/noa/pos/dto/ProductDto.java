@@ -3,7 +3,7 @@ package com.noa.pos.dto;
 
 import lombok.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -30,5 +30,5 @@ public class ProductDto {
 
     private String lastUser;
 
-    private Date lastTime;
+    private LocalDate lastTime;
 }
