@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,10 +25,9 @@ public class OrderSalesDetailEntity {
 	private Long orderSalesId;
 	private String productId;
 	private BigDecimal price;
-	private String description;
 	private Integer quantity;
 	private String lastUser;
-	private LocalDate lastTime;
+	private LocalDateTime lastTime;
 }
 
 

@@ -29,7 +29,7 @@ public class DomainController {
     @GetMapping(path = "/list")
     public ResponseEntity<?> list() {
         LOGGER.log(Level.INFO, "Listar usuario");
-        return new ResponseEntity<>(domainService.getAllUsers(), HttpStatus.OK);
+        return new ResponseEntity<>(domainService.getAllDomains(), HttpStatus.OK);
     }
 
     @GetMapping(path = "/save")

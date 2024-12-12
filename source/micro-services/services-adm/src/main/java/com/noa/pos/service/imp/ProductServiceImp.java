@@ -156,4 +156,14 @@ public class ProductServiceImp implements ProductService {
     public List<ProductDto> getAllProducts() {
         return productRepository.findAll().stream().parallel().map(this::entityToDto).toList();
     }
+
+    @Override
+    public List<ProductDto> findAllEnable() {
+        return productRepository.findAllEnable().stream().parallel().map(this::entityToDto).toList();
+    }
+
+    @Override
+    public List<ProductDto> findByProductType(String productType) {
+        return productRepository.findByProductType(productType).stream().parallel().map(this::entityToDto).toList();
+    }
 }

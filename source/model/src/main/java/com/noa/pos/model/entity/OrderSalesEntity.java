@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,11 +26,12 @@ public class OrderSalesEntity {
     private Integer ticketNumber;
     private BigDecimal totalAmount;
     private String state;
-    private String dateRegsiter;
+    private String dateRegister;
     private Integer companyId;
     private Integer sucursalId;
     private String lastUser;
-    private LocalDate lastTime;
+    private LocalDateTime lastTime;
+
 }
 
 

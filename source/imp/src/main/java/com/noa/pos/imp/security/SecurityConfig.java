@@ -4,8 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -24,15 +27,17 @@ import java.util.Arrays;
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
-    private final JwtAuthenticationEntryPoint point;
-    private final JwtAuthenticationFilter filter;
+    //private final JwtAuthenticationEntryPoint point;
+    //private final JwtAuthenticationFilterNew filter;
     private final SecurityProperties securityProperties;
     private final String[] SECURITY_MATCHER;
+    private final AuthenticationConfiguration authenticationConfiguration;
 
     @Autowired
-    SecurityConfig(JwtAuthenticationEntryPoint point, JwtAuthenticationFilter filter, SecurityProperties securityProperties, @Value("${spring.security.matcher}") String securityMatcher) {
-        this.point = point;
-        this.filter = filter;
+    SecurityConfig(SecurityProperties securityProperties, @Value("${spring.security.matcher}") String securityMatcher, AuthenticationConfiguration authenticationConfiguration) {
+        //this.point = point;
+        //this.filter = filter;
+        this.authenticationConfiguration = authenticationConfiguration;
         this.securityProperties = securityProperties;
         if(securityMatcher == null || securityMatcher.isEmpty() || securityMatcher.isBlank()) {
             this.SECURITY_MATCHER = new String[]{"/**"};
@@ -42,20 +47,22 @@ public class SecurityConfig {
     }
 
     @Bean
+    AuthenticationManager authenticationManager() throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http.csrf(AbstractHttpConfigurer::disable).cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(this.SECURITY_MATCHER).permitAll()
-                    .anyRequest().authenticated()
-                ).formLogin(form-> form.loginPage("/home/login")
-                        .loginProcessingUrl("/user/signin")
-                        .defaultSuccessUrl("/venta/"))
-                .logout(logout -> logout.logoutUrl("/home/logout").invalidateHttpSession(true)
-                        .clearAuthentication(true).permitAll());
-//                .exceptionHandling(ex->ex.authenticationEntryPoint(point))
-//                .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                ;
-        //http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+                        .requestMatchers("/","/home/login","/home/logout", "/js/addpreviewproduct.js", "/js/user.js", "/css/style.css").permitAll()
+                        .requestMatchers("/domain/*","/user/*", "/product/*", "/report/*","/venta/*").hasRole("ADMIN")
+                        .requestMatchers("/domain/*","/user/*", "/product/*", "/report/*","/venta/*").hasRole("CAJERO")
+                        .anyRequest().authenticated()
+                ).addFilter(new JwtAuthenticationFilterNew(authenticationManager()))
+                .addFilter(new JwtValidationFilter(authenticationManager()))
+                .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();
     }
 
@@ -70,9 +77,6 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
-
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {

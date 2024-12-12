@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{base::Layout(~{::section})}">
+<head>
+    <meta charset="UTF-8">
+    <title>Productos</title>
+</head>
+<body>
+<section>
+    <div class="container mt-5" style="max-width: 720px">
+        <div class="table-responsive">
+            <div class="card-header text-center fs-4">
+                <p class="fs-4">Reporte de ventas</p>
+            </div>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Nro. Ticket</th>
+                    <th scope="col">Cajero</th>
+                    <th scope="col">Cantidad</th>
+                    <th scope="col">Precio</th>
+                    <th scope="col">Fecha Reg.</th>
+                    <th scope="col">Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p,c:${ventas}">
+                    <th scope="row">[[${c.count}]]</th>
+                    <td>[[${p.code}]]</td>
+                    <td>[[${p.lastUser}]]</td>
+                    <td>[[${p.productType}]]</td>
+                    <td>[[${p.price}]]</td>
+                    <td>[[${p.enabled}]]</td>
+                    <td>
+                        <a th:href="@{'/report/detailreportsales/'+${p.productId}}" class="btn btn-sm btn-secondary">Detalle</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

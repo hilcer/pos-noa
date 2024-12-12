@@ -10,4 +10,6 @@ public class DomainConstant {
 
     // VALUES
     public static final String DEFAULT_COMPANY = "DEFAULT_COMPANY";
+    public static final String SEQUENCE_TICKET = "SEQUENCE_TICKET";
+    public static final String SEQUENCE_DATE = "SEQUENCE_DATE";
 }

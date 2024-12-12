@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,6 +27,6 @@ public class DomainEntity {
 	private String description;
 	private Boolean enabled;
 	private String lastUser;
-	private LocalDate lastTime;
+	private LocalDateTime lastTime;
 	private Integer companyId;
 }

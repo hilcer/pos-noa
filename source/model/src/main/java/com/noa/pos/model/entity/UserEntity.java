@@ -6,20 +6,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
-@Table(name = "user", uniqueConstraints = @UniqueConstraint(columnNames={"user"}, name = "UX_USER"))
+@Table(name = "user", uniqueConstraints = @UniqueConstraint(columnNames={"username"}, name = "UX_USER"))
 public class UserEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer userId;
-	private String user;
+	private String username;
 	private String password;
 	private String mobileNumber;
 	private String fullName;
@@ -32,10 +32,10 @@ public class UserEntity {
 	private Integer profileId;
 	private Boolean enabled;
 	private Integer failedAttempt;
-	private LocalDate lockTime;
+	private LocalDateTime lockTime;
 	private String resetToken;
 	private String lastUser;
-	private LocalDate lastTime;
+	private LocalDateTime lastTime;
 	private Integer companyId;
 
 }

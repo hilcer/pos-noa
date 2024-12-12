@@ -1,20 +1,19 @@
 package com.noa.pos.appweb.controller;
 
-import com.noa.pos.dto.DomainDto;
-import com.noa.pos.dto.PreOrderSalesDetailDto;
-import com.noa.pos.dto.UserDto;
+import com.noa.pos.dto.*;
+import com.noa.pos.imp.constant.DomainConstant;
 import com.noa.pos.service.DomainService;
+import com.noa.pos.service.OrderService;
 import com.noa.pos.service.ProductService;
 import com.noa.pos.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Controller
@@ -22,16 +21,31 @@ import java.util.List;
 public class VentaController {
 
     private final ProductService productService;
+    private final OrderService orderService;
+    private final DomainService domainService;
+
 
     @Autowired
-    public VentaController(final ProductService userService, ProfileService profileService, PasswordEncoder passwordEncoder) {
+    public VentaController(final ProductService userService, OrderService orderService, DomainService domainService) {
         this.productService = userService;
+        this.orderService = orderService;
+        this.domainService = domainService;
+    }
+
+    @GetMapping("/filterbytype/{name}")
+    public String filterbytype(@PathVariable String name, Model model) {
+
+        model.addAttribute("products", productService.findByProductType(name));
+        model.addAttribute("productstype", domainService.getGropupDom(DomainConstant.PRODUCT_TYPE));
+
+        return "venta/venta";
     }
 
     @GetMapping("/")
     public String home(Model model) {
 
-        model.addAttribute("products", productService.getAllProducts());
+        model.addAttribute("products", productService.findAllEnable());
+        model.addAttribute("productstype", domainService.getGropupDom(DomainConstant.PRODUCT_TYPE));
 
         return "venta/venta";
     }
@@ -44,12 +58,27 @@ public class VentaController {
         return "venta/orden";
     }
 
-    @PostMapping("/preorden")
-    public String preorden(@ModelAttribute List<PreOrderSalesDetailDto> usersDto, Model model) {
+    @GetMapping("/notaventa")
+    public String notaVenta(Model model) {
 
-        model.addAttribute("products", usersDto);
+//        model.addAttribute("products", productService.getAllProducts());
 
-        return "venta/orden";
+        return "venta/nota_venta";
+    }
+
+    @PostMapping("/registrarorden")
+    public ResponseEntity<?> registrarorden(@RequestBody OrderSalesDto orderSalesDto) {
+
+        OrderSalesDto orderSales;
+        try {
+            orderSales = orderService.saveOrders(orderSalesDto);
+            var formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+            orderSales.setDateRegister(orderSales.getLastTime().format(formatter));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return orderSales != null ? ResponseEntity.ok(orderSales) : ResponseEntity.notFound().build();
     }
 //    @PostMapping("/list")
 //    public String list(@ModelAttribute DomainDto domainDto) {

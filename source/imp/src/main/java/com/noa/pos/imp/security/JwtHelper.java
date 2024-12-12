@@ -81,7 +81,8 @@ public class JwtHelper {
 
     //for retrieveing any information from token we will need the secret key
     private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+        return Jwts.parser().setSigningKey(secret).build().parseSignedClaims(token).getPayload();
+        //return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
 
     //check if the token has expired
@@ -141,7 +142,8 @@ public class JwtHelper {
         X509Certificate cert = UtilSecutity.getX509Certificate(publicKeyStr);
         cert.getSerialNumber();
         ObjectMapper om = new ObjectMapper();
-        return om.writeValueAsString(Jwts.parserBuilder().setSigningKey(cert.getPublicKey()).build().parseClaimsJws(encryptedJson).getBody());
+        //return om.writeValueAsString(Jwts.parserBuilder().setSigningKey(cert.getPublicKey()).build().parseClaimsJws(encryptedJson).getBody());
+        return om.writeValueAsString(Jwts.parser().setSigningKey(cert.getPublicKey()).build().parseClaimsJws(encryptedJson).getBody());
     }
 
     private String calculateThumbprint(X509Certificate cert) {

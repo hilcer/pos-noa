@@ -25,6 +25,12 @@ public class DomainServiceImp implements DomainService {
         return entityToDto(entity);
     }
 
+    @Override
+    public DomainDto mergeDomain(DomainDto user) {
+        var entity = domainRepository.save(dtoToEntity(user));
+        return entityToDto(entity);
+    }
+
     private DomainDto entityToDto(DomainEntity entity) {
         var dto = new DomainDto();
         dto.setDomainId(entity.getDomainId());
@@ -39,7 +45,7 @@ public class DomainServiceImp implements DomainService {
     }
 
     private DomainEntity dtoToEntity(DomainDto domainDto) {
-        var entity = new DomainEntity();
+        var entity = domainDto.getDomainId() != null ? domainRepository.getReferenceById(domainDto.getDomainId()) : new DomainEntity();
         entity.setGroupDom(domainDto.getGroupDom());
         entity.setName(domainDto.getName());
         entity.setValue(domainDto.getValue());

@@ -4,7 +4,8 @@ package com.noa.pos.dto;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,11 +17,12 @@ public class OrderSalesDto {
     private Integer ticketNumber;
     private BigDecimal totalAmount;
     private String state;
-    private String dateRegsiter;
+    private String dateRegister;
     private Integer companyId;
     private Integer sucursalId;
     private String lastUser;
-    private LocalDate lastTime;
+    private LocalDateTime lastTime;
+    private List<OrderSalesDetailDto> details;
 }
 
 

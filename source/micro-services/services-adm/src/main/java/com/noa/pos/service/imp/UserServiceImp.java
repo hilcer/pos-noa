@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -27,7 +27,7 @@ public class UserServiceImp implements UserService {
     public UserDto saveUser(UserDto userDto) {
         var user = dtoToUser(userDto);
         user.setLastUser("ADM");
-        user.setLastTime(LocalDate.now());
+        user.setLastTime(LocalDateTime.now());
         user.setEnabled(true);
         user.setProfileId(1);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -41,7 +41,7 @@ public class UserServiceImp implements UserService {
 
     @Override
     public UserDto getUserByUser(String user) {
-        var entity = userRepository.findByUser(user);
+        var entity = userRepository.findByUsername(user);
 
         if (entity == null) return null;
 
@@ -70,7 +70,7 @@ public class UserServiceImp implements UserService {
 
     private UserEntity dtoToUser(UserDto dto) {
         UserEntity user = new UserEntity();
-        user.setUser(dto.getUser());
+        user.setUsername(dto.getUsername());
         user.setPassword(dto.getPassword());
         user.setMobileNumber(dto.getMobileNumber());
         user.setFullName(dto.getFullName());
@@ -93,7 +93,7 @@ public class UserServiceImp implements UserService {
     private UserDto userToDto(UserEntity user) {
         UserDto userDto = new UserDto();
         userDto.setUserId(user.getUserId());
-        userDto.setUser(user.getUser());
+        userDto.setUsername(user.getUsername());
         userDto.setPassword(user.getPassword());
         userDto.setMobileNumber(user.getMobileNumber());
         userDto.setFullName(user.getFullName());

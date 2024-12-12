@@ -23,11 +23,33 @@
 	font-size: 25px;
 	font-weight: bold;
 	letter-spacing: 2px;
-	background-color: darkgoldenrod;
+	background-color: #ffc107;
 	padding: 10px 20px;
 	color: white;
 	border-radius: 20px;
 	position: fixed;
-	right: 40px;
 	bottom: 40px;
 }
+
+.wrapper{
+	overflow-x: hidden;
+}
+
+.wrapper .tabs-box {
+	display: flex;
+	gap: 12px;
+	list-style: none;
+	overflow-x: auto;
+}
+
+.slider .tabs-box::-webkit-scrollbar{
+	display: none;
+
+}
+
+
+.tabs-box .tbas {
+	cursor: pointer;
+}
+
+

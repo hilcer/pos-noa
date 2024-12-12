@@ -2,7 +2,7 @@ package com.noa.pos.dto;
 
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,6 +15,6 @@ public class CompanyDto {
 	private String nit;
 	private Boolean enabled;
 	private String lastUser;
-	private LocalDate lastTime;
+	private LocalDateTime lastTime;
 
 }

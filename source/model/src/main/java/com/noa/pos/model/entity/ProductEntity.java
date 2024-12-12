@@ -1,21 +1,19 @@
 package com.noa.pos.model.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@Entity(name = "product")
+@Table(name = "product")
+@Entity
 public class ProductEntity {
 
     @Id
@@ -36,5 +34,5 @@ public class ProductEntity {
     private String initStamp;
     private Boolean enabled;
     private String lastUser;
-    private LocalDate lastTime;
+    private LocalDateTime lastTime;
 }

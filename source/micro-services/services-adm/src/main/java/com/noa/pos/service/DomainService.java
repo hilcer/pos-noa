@@ -8,6 +8,8 @@ public interface DomainService {
 
     public DomainDto saveDomain(DomainDto user);
 
+    public DomainDto mergeDomain(DomainDto user);
+
     List<DomainDto> getAllDomains();
 
     public List<DomainDto> getGropupDom(String group);

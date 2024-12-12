@@ -5,11 +5,13 @@ import com.noa.pos.dto.UserDto;
 import com.noa.pos.service.ProfileService;
 import com.noa.pos.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/user")
@@ -26,8 +28,8 @@ public class UserController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @PostMapping("/signin")
-    public String login(@ModelAttribute LoginDto loginDto) {
+    @GetMapping("/signin")
+    public String login(@RequestBody LoginDto loginDto) {
 
         var exist = userService.getUserByUser(loginDto.getUsername());
         if (exist == null) {
@@ -39,9 +41,14 @@ public class UserController {
             return "login";
         }
 
-        var roles = profileService.getProfileByUserId(exist.getProfileId());
+        //var roles = profileService.getProfileByUserId(exist.getProfileId());
 
         return "venta/venta";
+    }
+
+    @GetMapping("/listar")
+    public ResponseEntity<?> index() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @PostMapping("/register")

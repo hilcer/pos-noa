@@ -3,7 +3,7 @@ package com.noa.pos.dto;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,7 +18,7 @@ public class PreOrderSalesDetailDto {
     private String name;
     private Integer quantity;
     private String lastUser;
-    private LocalDate lastTime;
+    private LocalDateTime lastTime;
 }
 
 
