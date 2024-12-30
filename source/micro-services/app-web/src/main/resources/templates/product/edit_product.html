@@ -32,7 +32,7 @@
                                 <label class="form-label">tipo de Prod.</label>
                                 <select class="form-control" name="productType">
                                     <option>[[${product.productType}]]</option>
-                                    <option th:each="c:${domains}">[[${c.value}]]</option>
+                                    <option th:each="c:${domains}">[[${c.name}]]</option>
                                 </select>
                             </div>
                             <div class="mb-3">

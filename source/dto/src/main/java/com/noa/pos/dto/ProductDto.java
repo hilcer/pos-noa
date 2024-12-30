@@ -3,6 +3,7 @@ package com.noa.pos.dto;
 
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
@@ -18,7 +19,7 @@ public class ProductDto {
     private String code;
     private String name;
     private String description;
-    private String price;
+    private BigDecimal price;
     private String productType;
     private String image;
     private String stock;

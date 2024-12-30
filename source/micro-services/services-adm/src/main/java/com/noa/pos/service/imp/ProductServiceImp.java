@@ -6,8 +6,12 @@ import com.noa.pos.model.repository.DomainRepository;
 import com.noa.pos.model.repository.ProductRepository;
 import com.noa.pos.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -165,5 +169,23 @@ public class ProductServiceImp implements ProductService {
     @Override
     public List<ProductDto> findByProductType(String productType) {
         return productRepository.findByProductType(productType).stream().parallel().map(this::entityToDto).toList();
+    }
+
+    @Override
+    public Page<ProductDto> searchProductPagination(Integer pageNo, Integer pageSize, String ch) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        //return productRepository.findByTitleContainingIgnoreCaseOrCategoryContainingIgnoreCase(ch, ch, pageable);
+        return null;
+    }
+
+    @Override
+    public Page<ProductEntity> getAllProductsPagination(Integer pageNo, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        return productRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<ProductDto> searchActiveProductPagination(Integer pageNo, Integer pageSize, String category, String ch) {
+        return null;
     }
 }

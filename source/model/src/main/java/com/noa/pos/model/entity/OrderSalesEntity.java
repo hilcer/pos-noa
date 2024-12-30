@@ -1,10 +1,7 @@
 package com.noa.pos.model.entity;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +14,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-@Entity(name = "order_sales")
+@Table(name = "order_sales")
+@Entity
 public class OrderSalesEntity {
 
     @Id
@@ -29,6 +27,7 @@ public class OrderSalesEntity {
     private String dateRegister;
     private Integer companyId;
     private Integer sucursalId;
+    private String typePayment;
     private String lastUser;
     private LocalDateTime lastTime;
 

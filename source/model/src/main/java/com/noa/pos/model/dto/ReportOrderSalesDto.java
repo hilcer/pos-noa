@@ -15,7 +15,6 @@ import java.util.List;
 public class ReportOrderSalesDto {
     private Long orderSalesId;
     private Integer ticketNumber;
-    private Integer name;
     private BigDecimal totalAmount;
     private String state;
     private String dateRegister;
@@ -23,5 +22,6 @@ public class ReportOrderSalesDto {
     private Integer sucursalId;
     private String lastUser;
     private LocalDateTime lastTime;
+    private List<ReportOrderSalesDetailDto> details;
 }
 

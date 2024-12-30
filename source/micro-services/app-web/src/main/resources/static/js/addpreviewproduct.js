@@ -1,5 +1,64 @@
-$(document).ready(function () {
+// Guardar el fetch original
+const originalFetch = window.fetch;
 
+window.fetch = async function (...args) {
+    console.log('Interceptando fetch:', args);
+
+    // Puedes modificar la solicitud aquí si es necesario
+    let [resource, config] = args;
+    console.log('URL:', resource);
+
+    if (config) {
+        console.log('request:', config);
+
+        if (resource !== 'login') {
+            const userData = JSON.parse(localStorage.getItem('userData'));
+            config.headers['Authorization'] = 'Bearer '+userData.token;
+            //config.headers.push({Authorization: 'Bearer '+userData.token});
+            console.log('MODIFICARRRRRRR',config.headers);
+        }
+    }
+    // Llamar al fetch original
+    const response = await originalFetch(...args);
+
+    // Puedes modificar la respuesta aquí si es necesario
+    console.log('Respuesta interceptada:', response);
+
+    return response; // Retornar la respuesta (modificada o no)
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+    console.log('Ejecutando F5');
+
+    // limpiar localStorage luego del login
+    if (window.location.pathname === "/login") {
+        // Ejecutar código específico
+        console.log('Limpieza de localstorage');
+        limpiarLocalStorare();
+    }
+
+    if (window.location.pathname === "/") {
+        // Ejecutar código específico
+        console.log('Limpieza de localstorage');
+        limpiarLocalStorare();
+    }
+
+
+    if (window.location.pathname === "/venta/orden") {
+        // Ejecutar código específico
+        generarPreOrden();
+    }
+
+    if (window.location.pathname === "/venta/notaventa") {
+        // Ejecutar código específico
+        generarNotaVenta();
+    }
+
+    if (window.location.pathname === "/venta/") {
+    }
+
+    enabledButon();
+    cargarMenuLeft();
 });
 
 async function agregarProducto(any) {
@@ -74,6 +133,9 @@ async function quitarProducto(any) {
             console.log('existe el producto :', products);
             if (existProduct.quantity > 0) {
                 existProduct.quantity = Number(existProduct.quantity) - 1;
+                if (existProduct.quantity === 0) {
+                    delete products[productId];
+                }
                 const price = Number(localStorage.getItem('totalPrice')) - Number(product.price);
                 totalPrice = price;
                 localStorage.setItem('products', JSON.stringify(products));
@@ -165,33 +227,6 @@ async function agregarProductoOrd(idProduct) {
     }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-
-    // limpiar localStorage luego del login
-    if (window.location.pathname === "/login") {
-        // Ejecutar código específico
-        console.log('Limpieza de localstorage');
-        limpiarLocalStorare();
-    }
-
-
-    if (window.location.pathname === "/venta/orden") {
-        // Ejecutar código específico
-        generarPreOrden();
-    }
-
-    if (window.location.pathname === "/venta/notaventa") {
-        // Ejecutar código específico
-        generarNotaVenta();
-    }
-
-    if (window.location.pathname === "/venta/") {
-    }
-
-    //activeToListTypeProducts();
-    enabledButon()
-});
-
 async function enabledButon() {
 // Validar si hay produtos en memoria
     let products = JSON.parse(localStorage.getItem('products'));
@@ -213,7 +248,18 @@ async function activeToListTypeProducts() {
 }
 
 async function registrarOrden() {
+
+    let checkedSelect;
+    const inputChecks = document.querySelectorAll('.form-check-input');
+    inputChecks.forEach( check => {
+            if (check.checked){
+                checkedSelect = check;
+            }
+        }
+    )
+
     let products = JSON.parse(localStorage.getItem('products'));
+    const userData = JSON.parse(localStorage.getItem('userData'));
     let listaProductos = [];
 
     for (const clave in products) {
@@ -223,9 +269,8 @@ async function registrarOrden() {
 
     const orderSales = {
         totalAmount: totalAmount,
-        companyId: 2,
-        sucursalId: 1,
-        lastUser: "admin",
+        lastUser: userData.user,
+        typePayment: checkedSelect.id,
         details: listaProductos
     }
 
@@ -283,8 +328,119 @@ async function limpiarLocalStorare() {
     localStorage.clear();
 }
 
+async function limpiarLocalStorareWithOutUser() {
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    localStorage.clear();
+    localStorage.setItem('userData', JSON.stringify(userData));
+}
+
 async function nuevaVenta() {
-    limpiarLocalStorare();
+    limpiarLocalStorareWithOutUser()
     window.location.href = "/venta/";
 }
 
+async function listarReporte() {
+    window.location.href = "/report/reportsales";
+}
+
+async function loadVenta(token) {
+    const rawResponse = await fetch('venta/', {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        }
+    });
+
+    if (rawResponse.ok) {
+        window.location.href = "/venta/";
+        const html = await rawResponse.text(); // Obtener el HTML como texto
+        document.open(); // Abrir el documento actual
+        document.write(html); // Reemplazar el contenido con el nuevo HTML
+        document.close(); // Finalizar la escritura
+        history.pushState({}, '', 'venta/');
+    }
+}
+
+
+// METODOS USER
+document.getElementById('formlogin').addEventListener('submit', async function (event) {
+    event.preventDefault(); // Evitar que se recargue la página
+    signin();
+});
+
+async function signin() {
+
+    const usuario = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    const userData = {
+        username: usuario,
+        password: password,
+    }
+
+    const rawResponse = await fetch('login', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData)
+    });
+    //console.log('ALLOBJ:',rawResponse);
+
+    const responseToken = await rawResponse.json();
+
+    console.log(responseToken);
+
+    if (rawResponse.ok) {
+        localStorage.setItem('userData', JSON.stringify(responseToken));
+        window.location.href = "/venta/";
+        //loadVenta(responseToken.token);
+    }
+}
+
+async function loadVenta(token) {
+    const rawResponse = await fetch('venta/', {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        }
+    });
+
+    if (rawResponse.ok) {
+        //window.location.href = "/venta/";
+        const html = await rawResponse.text(); // Obtener el HTML como texto
+        document.open(); // Abrir el documento actual
+        document.write(html); // Reemplazar el contenido con el nuevo HTML
+        document.close(); // Finalizar la escritura
+
+        history.pushState({}, '', 'venta/');
+    }
+}
+
+async function cargarMenuLeft() {
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    if (userData) {
+        document.getElementById('limenureplace').outerHTML = '<li class="nav-item"><a class="nav-link" aria-current="page" href="/venta/">Venta</a></li><li class="nav-item"><a class="nav-link" aria-current="page" href="/product/products">Productos</a></li><li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"aria-expanded="false">Reportes</a><ul class="dropdown-menu"><li><a class="dropdown-item" aria-current="page" href="/report/reportsales">Reporte de ventas</a></li><li><a class="dropdown-item" aria-current="page" href="/report/reportsalesprod">Control de ventas producto</a></li></ul></li>';
+    }else {
+        document.getElementById('limenureplace').outerHTML = '<li id="limenureplace" ></li>';
+    }
+}
+
+async function exportarExcel() {
+    const rawResponse = await fetch('exportexcel', {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        }
+    });
+
+    console.log("RESPONSE:",rawResponse);
+    if (rawResponse.ok) {
+
+    }
+}

@@ -8,36 +8,74 @@
 <body>
 <section>
     <div class="container mt-5" style="max-width: 720px">
+        <div class="card-header text-center fs-4">
+            <p class="fs-4">Reporte de ventas</p>
+        </div>
+        <div class="grid grid-cols-5 grid-rows-5 gap-4 p-3">
+            <form th:action="@{'/report/reportsales?dateFrom='+${dateFrom.toString()}+'&dateTo='+${dateTo.toString()}}" method="get">
+                <label class="form-label">Desde:</label>
+                <input id="fechadesde" name="dateFrom" type="date" th:value="${dateFrom}">
+                <label class="form-label">Hasta:</label>
+                <input id="fechahasta" name="dateTo" type="date" th:value="${dateTo}">
+                <br>
+                <button type="submit" class="btn bg-primary text-white"><i class="fa-solid fa-plus"></i>Filtrar
+                </button>
+                <a th:href="@{'/report/exportexcel?dateFrom='+${dateFrom.toString()}+'&dateTo='+${dateTo.toString()}}"
+                   class="btn btn-success">Exportar XLS</a>
+            </form>
+        </div>
         <div class="table-responsive">
-            <div class="card-header text-center fs-4">
-                <p class="fs-4">Reporte de ventas</p>
-            </div>
             <table class="table">
                 <thead>
                 <tr>
-                    <th scope="col">#</th>
                     <th scope="col">Nro. Ticket</th>
                     <th scope="col">Cajero</th>
-                    <th scope="col">Cantidad</th>
-                    <th scope="col">Precio</th>
+                    <th scope="col">Importe Total</th>
                     <th scope="col">Fecha Reg.</th>
                     <th scope="col">Acciones</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="p,c:${ventas}">
-                    <th scope="row">[[${c.count}]]</th>
-                    <td>[[${p.code}]]</td>
+                <tr th:each="p,c:${reportsales}">
+                    <th scope="row">[[${p.ticketNumber}]]</th>
                     <td>[[${p.lastUser}]]</td>
-                    <td>[[${p.productType}]]</td>
-                    <td>[[${p.price}]]</td>
-                    <td>[[${p.enabled}]]</td>
+                    <td>[[${p.totalAmount}]]</td>
+                    <td>[[${p.dateRegister}]]</td>
                     <td>
-                        <a th:href="@{'/report/detailreportsales/'+${p.productId}}" class="btn btn-sm btn-secondary">Detalle</a>
+                        <a th:href="@{'/report/reportsalesdetail/'+${p.orderSalesId}}" class="btn btn-sm btn-secondary">Detalle</a>
                     </td>
                 </tr>
                 </tbody>
             </table>
+            <div class="row">
+                <div class="col-md-4">Total ventas : [[${totalElements}]]</div>
+                <div class="col-md-6">
+                    <th:block th:if="${productsSize>0}">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination">
+                                <li class="page-item"
+                                    th:classappend="${isFirst} ? 'disabled':''"><a
+                                        class="page-link"
+                                        th:href="@{'/report/reportsales?pageNo='+${pageNo-1}+'&dateFrom='+${dateFrom.toString()}+'&dateTo='+${dateTo.toString()}}"
+                                        aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
+                                </a></li>
+
+                                <li th:each="i:${#numbers.sequence(1,totalPages)}"
+                                    class="page-item" th:classappend="${pageNo+1==i}?'active':''"
+                                ><a class="page-link"
+                                    th:href="@{'/report/reportsales?pageNo='+${i-1}+'&dateFrom='+${dateFrom.toString()}+'&dateTo='+${dateTo.toString()}}">[[${i}]]</a></li>
+
+                                <li class="page-item"
+                                    th:classappend="${isLast} ? 'disabled':''"><a
+                                        class="page-link"
+                                        th:href="@{'/report/reportsales?pageNo='+${pageNo+1}+'&dateFrom='+${dateFrom.toString()}+'&dateTo='+${dateTo.toString()}}"
+                                        aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+                                </a></li>
+                            </ul>
+                        </nav>
+                    </th:block>
+                </div>
+            </div>
         </div>
     </div>
 </section>

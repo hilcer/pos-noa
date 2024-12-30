@@ -56,9 +56,7 @@ public class SecurityConfig {
 
         http.csrf(AbstractHttpConfigurer::disable).cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/","/home/login","/home/logout", "/js/addpreviewproduct.js", "/js/user.js", "/css/style.css").permitAll()
-                        .requestMatchers("/domain/*","/user/*", "/product/*", "/report/*","/venta/*").hasRole("ADMIN")
-                        .requestMatchers("/domain/*","/user/*", "/product/*", "/report/*","/venta/*").hasRole("CAJERO")
+                        .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated()
                 ).addFilter(new JwtAuthenticationFilterNew(authenticationManager()))
                 .addFilter(new JwtValidationFilter(authenticationManager()))

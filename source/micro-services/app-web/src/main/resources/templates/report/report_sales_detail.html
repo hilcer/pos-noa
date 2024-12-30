@@ -12,14 +12,17 @@
         <br>
         <div class="table-responsive">
             <div class="card-header text-center fs-4">
+                <button type="button" class="btn btn-primary" onclick="listarReporte()">Volver</button>
+            </div>
+            <div class="card-header text-center fs-4">
                 <p class="fs-4">Nota de venta</p>
                 <div id="liveAlertPlaceholder"></div>
             </div>
 
             <div id="headersalesnote">
-                <h5>Nro. Ticket:  001</h5>
-                <h5>Fecha:  2024/11/06 08:30:30 Hrs.</h5>
-                <h5>Cajero:  Patricia</h5>
+                <h5>Nro. Ticket:  [[${reportSales.ticketNumber}]]</h5>
+                <h5>Fecha:  [[${reportSales.dateRegister}]]</h5>
+                <h5>Cajero:  [[${reportSales.lastUser}]]</h5>
             </div>
             <table class="table" id="notaventa">
                 <thead>
@@ -31,15 +34,16 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
+                <tr th:each="p,c:${reportSales.getDetails()}">
+                    <td>[[${p.quantity}]]</td>
+                    <td>[[${p.name}]]</td>
+                    <td>[[${p.price}]]</td>
+                    <td>[[${p.quantity}*${p.price}]]</td>
                 </tr>
                 </tbody>
             </table>
             <div class="card-header text-center fs-4">
-                <p class="fs-4" id="resumentotalNotaVenta">Total</p>
-            </div>
-            <div class="card-header text-center fs-4">
-                <button type="button" class="btn btn-primary" onclick="nuevaVenta()">Nueva venta</button>
+                <p class="fs-4" id="resumentotalNotaVenta">Total [[${reportSales.totalAmount}]]</p>
             </div>
         </div>
 

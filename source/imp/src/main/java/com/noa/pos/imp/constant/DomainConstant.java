@@ -5,6 +5,7 @@ public class DomainConstant {
     // GROUPS
     public static final String PRODUCT_TYPE = "PRODUCT_TYPE";
     public static final String CONFIGURATION = "CONFIGURATION";
+    public static final String PAYMENT_TYPE = "PAYMENT_TYPE";
 
 
 

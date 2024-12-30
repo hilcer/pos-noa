@@ -5,19 +5,28 @@ import com.noa.pos.dto.OrderSalesDetailDto;
 import com.noa.pos.dto.OrderSalesDto;
 import com.noa.pos.imp.constant.DomainConstant;
 import com.noa.pos.imp.constant.OrderState;
+import com.noa.pos.model.dto.ReportOrderSalesDetailDto;
 import com.noa.pos.model.dto.ReportOrderSalesDto;
+import com.noa.pos.model.dto.ReportOrderSalesProdDto;
 import com.noa.pos.model.entity.OrderSalesDetailEntity;
 import com.noa.pos.model.entity.OrderSalesEntity;
 import com.noa.pos.model.repository.OrderSalesDetailRepository;
 import com.noa.pos.model.repository.OrderSalesRepository;
 import com.noa.pos.service.DomainService;
 import com.noa.pos.service.OrderService;
+import com.noa.pos.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -26,17 +35,24 @@ public class OrderServicesImp implements OrderService {
     private final OrderSalesRepository orderSalesRepository;
     private final OrderSalesDetailRepository orderSalesDetailRepository;
     private final DomainService domainService;
+    private final UserService userService;
 
     @Autowired
     public OrderServicesImp(final OrderSalesRepository orderSalesRepository, final OrderSalesDetailRepository orderSalesDetailRepository,
-                            final DomainService domainService) {
+                            final DomainService domainService, final UserService userService) {
         this.orderSalesDetailRepository = orderSalesDetailRepository;
         this.orderSalesRepository = orderSalesRepository;
         this.domainService = domainService;
+        this.userService = userService;
     }
 
     @Override
     public OrderSalesDto saveOrders(OrderSalesDto orderSalesDto) throws Exception {
+
+        // Obtener informacion del usuario
+        var userName = userService.getUserByUser(orderSalesDto.getLastUser());
+        orderSalesDto.setCompanyId(userName.getCompanyId());
+        orderSalesDto.setSucursalId(userName.getSucursalId());
 
         Integer nroTicket = getNextTicket();
         orderSalesDto.setTicketNumber(nroTicket);
@@ -91,6 +107,18 @@ public class OrderServicesImp implements OrderService {
         return 0;
     }
 
+    public List<OrderSalesDto> findAll() {
+        return orderSalesRepository.findAll().stream().parallel().map(this::entityToDto).toList();
+    }
+
+    public OrderSalesDto findById(Long orderId) {
+        return entityToDto(orderSalesRepository.findById(orderId).get());
+    }
+
+    public List<ReportOrderSalesDetailDto> findOrderSalesDetailByOrderId(Long orderId) {
+        return orderSalesDetailRepository.findByOrderSalesDetail(orderId).stream().parallel().toList();
+    }
+
     private OrderSalesEntity dtoToEntity(OrderSalesDto salesDto) {
         var entity = new OrderSalesEntity();
         entity.setTicketNumber(salesDto.getTicketNumber());
@@ -99,6 +127,7 @@ public class OrderServicesImp implements OrderService {
         entity.setDateRegister(LocalDate.now().toString());
         entity.setCompanyId(salesDto.getCompanyId());
         entity.setSucursalId(salesDto.getSucursalId());
+        entity.setTypePayment(salesDto.getTypePayment());
         entity.setLastUser(salesDto.getLastUser());
         entity.setLastTime(LocalDateTime.now());
         return entity;
@@ -141,7 +170,30 @@ public class OrderServicesImp implements OrderService {
         return detailDto;
     }
 
-    public static void main(String[] args) {
-        ReportOrderSalesDto dto = new ReportOrderSalesDto();
+    @Override
+    public Page<OrderSalesEntity> getAllOrderSalesPagination(Integer pageNo, Integer pageSize) {
+        Sort sort = Sort.by(Sort.Order.desc("lastTime"));
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        return orderSalesRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<OrderSalesEntity> searchOrderSalesPagination(Integer pageNo, Integer pageSize, String dateFrom, String dateTo) {
+        Sort sort = Sort.by(Sort.Order.desc("lastTime"));
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return orderSalesRepository.findByLastTimeBetweenPageable(LocalDate.parse(dateFrom, formatter).atStartOfDay(), LocalDate.parse(dateTo, formatter).atTime(23,59,59), pageable);
+    }
+
+    @Override
+    public List<OrderSalesDto> searchOrderSales(String dateFrom, String dateTo) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return orderSalesRepository.findByLastTimeBetween(LocalDate.parse(dateFrom, formatter).atStartOfDay(), LocalDate.parse(dateTo, formatter).atTime(23,59,59)).stream().parallel().map(this::entityToDto).toList();
+    }
+
+    @Override
+    public List<ReportOrderSalesProdDto> searchOrderSalesByProd(String dateFrom, String dateTo) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return orderSalesRepository.findByLastTimeBetweenProd(LocalDate.parse(dateFrom, formatter).atStartOfDay(), LocalDate.parse(dateTo, formatter).atTime(23,59,59));
     }
 }

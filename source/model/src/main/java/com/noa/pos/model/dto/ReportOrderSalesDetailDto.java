@@ -1,6 +1,5 @@
-package com.noa.pos.model.entity;
+package com.noa.pos.model.dto;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,15 +12,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name = "order_sales_detail")
-@Entity
-public class OrderSalesDetailEntity {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ReportOrderSalesDetailDto {
 	private Long orderSalesDetailId;
 	private Long orderSalesId;
 	private Integer productId;
+	private String name;
 	private BigDecimal price;
 	private Integer quantity;
 	private String lastUser;

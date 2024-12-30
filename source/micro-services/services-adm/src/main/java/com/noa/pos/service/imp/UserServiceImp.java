@@ -87,6 +87,8 @@ public class UserServiceImp implements UserService {
         user.setResetToken(dto.getResetToken());
         user.setLastUser(dto.getLastUser());
         user.setLastTime(dto.getLastTime());
+        user.setCompanyId(dto.getCompanyId());
+        user.setSucursalId(dto.getSucursalId());
         return user;
     }
 
@@ -110,6 +112,8 @@ public class UserServiceImp implements UserService {
         userDto.setResetToken(user.getResetToken());
         userDto.setLastUser(user.getLastUser());
         userDto.setLastTime(user.getLastTime());
+        userDto.setCompanyId(user.getCompanyId());
+        userDto.setSucursalId(user.getSucursalId());
         return userDto;
     }
 

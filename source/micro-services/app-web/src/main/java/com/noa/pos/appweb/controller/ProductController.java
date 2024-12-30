@@ -2,12 +2,14 @@ package com.noa.pos.appweb.controller;
 
 import com.noa.pos.dto.ProductDto;
 import com.noa.pos.imp.constant.DomainConstant;
+import com.noa.pos.model.entity.ProductEntity;
 import com.noa.pos.service.CompanyService;
 import com.noa.pos.service.DomainService;
 import com.noa.pos.service.ProductService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 
 @Controller
 @RequestMapping("/product")
@@ -40,6 +43,29 @@ public class ProductController {
     public String index(Model model) {
 
         model.addAttribute("products", productService.getAllProducts());
+
+        return "product/list_product";
+    }
+
+    @GetMapping("/products")
+    public String loadViewProduct(Model m, @RequestParam(defaultValue = "") String ch,
+                                  @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo,
+                                  @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+
+        Page<ProductEntity> page = productService.getAllProductsPagination(pageNo, pageSize);
+//            page = productService.getAllProductsPagination(pageNo, pageSize);
+        m.addAttribute("products", page.getContent());
+
+        List<ProductEntity> products = page.getContent();
+        m.addAttribute("products", products);
+        m.addAttribute("productsSize", products.size());
+
+        m.addAttribute("pageNo", page.getNumber());
+        m.addAttribute("pageSize", pageSize);
+        m.addAttribute("totalElements", page.getTotalElements());
+        m.addAttribute("totalPages", page.getTotalPages());
+        m.addAttribute("isFirst", page.isFirst());
+        m.addAttribute("isLast", page.isLast());
 
         return "product/list_product";
     }
@@ -95,8 +121,6 @@ public class ProductController {
 
         return "redirect:/product/";
     }
-
-
 
     @GetMapping("/editproduct/{id}")
     public String editProduct(@PathVariable int id, Model model) {

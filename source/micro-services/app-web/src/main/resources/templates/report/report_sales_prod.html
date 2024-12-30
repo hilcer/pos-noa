@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{base::Layout(~{::section})}">
+<head>
+    <meta charset="UTF-8">
+    <title>Productos</title>
+</head>
+<body>
+<section>
+    <div class="container mt-5" style="max-width: 720px">
+        <div class="card-header text-center fs-4">
+            <p class="fs-4">Reporte de ventas</p>
+        </div>
+        <div class="grid grid-cols-5 grid-rows-5 gap-4 p-3">
+            <form th:action="@{'/report/reportsalesprod?dateFrom='+${dateFrom.toString()}+'&dateTo='+${dateTo.toString()}}" method="get">
+                <label class="form-label">Desde:</label>
+                <input id="fechadesde" name="dateFrom" type="date" th:value="${dateFrom}">
+                <label class="form-label">Hasta:</label>
+                <input id="fechahasta" name="dateTo" type="date" th:value="${dateTo}">
+                <br>
+                <button type="submit" class="btn bg-primary text-white"><i class="fa-solid fa-plus"></i>Filtrar
+                </button>
+                <a th:href="@{'/report/exportexcelprod?dateFrom='+${dateFrom.toString()}+'&dateTo='+${dateTo.toString()}}"
+                   class="btn btn-success">Exportar XLS</a>
+            </form>
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Nro. Ticket</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Producto</th>
+                    <th scope="col">Cantidad</th>
+                    <th scope="col">Importe Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p,c:${reportsalesprod}">
+                    <th scope="row">[[${p.ticketNumber}]]</th>
+                    <td>[[${p.dateRegister}]]</td>
+                    <td>[[${p.name}]]</td>
+                    <td>[[${p.quantity}]]</td>
+                    <td>[[${p.price}*${p.quantity}]]</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

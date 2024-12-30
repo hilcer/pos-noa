@@ -21,6 +21,7 @@ public class OrderSalesDto {
     private Integer companyId;
     private Integer sucursalId;
     private String lastUser;
+    private String typePayment;
     private LocalDateTime lastTime;
     private List<OrderSalesDetailDto> details;
 }

@@ -37,5 +37,6 @@ public class UserEntity {
 	private String lastUser;
 	private LocalDateTime lastTime;
 	private Integer companyId;
+	private Integer sucursalId;
 
 }

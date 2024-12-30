@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
@@ -24,7 +25,7 @@ public class ProductEntity {
     private String code;
     private String name;
     private String description;
-    private String price;
+    private BigDecimal price;
     private String productType;
     private String image;
     private String stock;
