@@ -76,7 +76,7 @@ public class JwtAuthenticationFilterNew  extends UsernamePasswordAuthenticationF
         Map<String, String> body = new HashMap<>();
         body.put("token", tokenJws);
         body.put("user", user.getUsername());
-        body.put("message", String.format("Hola %s has iniciado sesion con exito!", user.getUsername()));
+        body.put("role", user.getAuthorities().toString());
 
         response.getWriter().write(new ObjectMapper().writeValueAsString(body));
         response.setContentType(CONTENT_TYPE);
