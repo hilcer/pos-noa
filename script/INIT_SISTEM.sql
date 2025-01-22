@@ -3,6 +3,7 @@ INSERT INTO company (enabled,last_user,name_company,nit, last_time) VALUES
 
 INSERT INTO profile (company_id,description,enabled,last_time,last_user,name) VALUES
 	 ((select c.company_id from company c where c.nit = '85928592'),'Cajero',1, NOW(),'admin','ROLE_CAJERO'),
+	 ((select c.company_id from company c where c.nit = '85928592'),'Super Adm',1, NOW(),'admin','ROLE_SUPERADM'),
 	 ((select c.company_id from company c where c.nit = '85928592'),'Admin',1, NOW(),'admin','ROLE_ADMIN');
 
 

@@ -2,44 +2,32 @@
 const originalFetch = window.fetch;
 
 window.fetch = async function (...args) {
-    console.log('Interceptando fetch:', args);
 
     // Puedes modificar la solicitud aquí si es necesario
     let [resource, config] = args;
-    console.log('URL:', resource);
 
     if (config) {
-        console.log('request:', config);
-
         if (resource !== 'login') {
             const userData = JSON.parse(localStorage.getItem('userData'));
             config.headers['Authorization'] = 'Bearer '+userData.token;
-            //config.headers.push({Authorization: 'Bearer '+userData.token});
-            console.log('MODIFICARRRRRRR',config.headers);
         }
     }
     // Llamar al fetch original
     const response = await originalFetch(...args);
 
-    // Puedes modificar la respuesta aquí si es necesario
-    console.log('Respuesta interceptada:', response);
-
     return response; // Retornar la respuesta (modificada o no)
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-    console.log('Ejecutando F5');
 
     // limpiar localStorage luego del login
     if (window.location.pathname === "/login") {
         // Ejecutar código específico
-        console.log('Limpieza de localstorage');
         limpiarLocalStorare();
     }
 
     if (window.location.pathname === "/") {
         // Ejecutar código específico
-        console.log('Limpieza de localstorage');
         limpiarLocalStorare();
     }
 
@@ -78,7 +66,6 @@ async function agregarProducto(any) {
     let products = JSON.parse(localStorage.getItem('products'));
     let totalPrice = 0;
     let totalQuantity = 0;
-    console.log(products);
     if (products) {
 
         // validar si existe el producto
@@ -100,7 +87,6 @@ async function agregarProducto(any) {
         localStorage.setItem('totalPrice', price);
         totalPrice = price;
     }
-    console.log('producto :', products);
     document.getElementById('detailproduct').style.display = 'block';
 
     totalQuantity = Number(localStorage.getItem('totalQuantity')) + 1;
@@ -124,13 +110,11 @@ async function quitarProducto(any) {
     let products = JSON.parse(localStorage.getItem('products'));
     let totalPrice = 0;
     let totalQuantity = 0;
-    console.log(products);
     if (products) {
 
         // validar si existe el producto
         const existProduct = products[productId];
         if (existProduct) {
-            console.log('existe el producto :', products);
             if (existProduct.quantity > 0) {
                 existProduct.quantity = Number(existProduct.quantity) - 1;
                 if (existProduct.quantity === 0) {
@@ -284,8 +268,6 @@ async function registrarOrden() {
     });
     const ordenSales = await rawResponse.json();
 
-    console.log(ordenSales);
-
     if (ordenSales) {
         localStorage.setItem('orderSales', JSON.stringify(ordenSales));
         window.location.href = "/venta/notaventa";
@@ -388,11 +370,8 @@ async function signin() {
         },
         body: JSON.stringify(userData)
     });
-    //console.log('ALLOBJ:',rawResponse);
 
     const responseToken = await rawResponse.json();
-
-    console.log(responseToken);
 
     if (rawResponse.ok) {
         localStorage.setItem('userData', JSON.stringify(responseToken));
@@ -424,7 +403,6 @@ async function loadVenta(token) {
 async function cargarMenuLeft() {
     const userData = JSON.parse(localStorage.getItem('userData'));
     if (userData) {
-        console.log('OOOOOO:', userData);
         if (userData.role === '[ROLE_SUPERADM]'){
             document.getElementById('limenureplace').outerHTML = '<li class="nav-item"><a class="nav-link" aria-current="page" href="/venta/">Venta</a></li>' +
                 '<li class="nav-item"><a class="nav-link" aria-current="page" href="/product/products">Productos</a></li>' +
@@ -465,7 +443,6 @@ async function exportarExcel() {
         }
     });
 
-    console.log("RESPONSE:",rawResponse);
     if (rawResponse.ok) {
 
     }
