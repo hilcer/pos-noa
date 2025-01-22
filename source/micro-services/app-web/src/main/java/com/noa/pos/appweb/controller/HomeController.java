@@ -1,12 +1,27 @@
 package com.noa.pos.appweb.controller;
 
+import com.noa.pos.imp.constant.DomainConstant;
+import com.noa.pos.service.CompanyService;
+import com.noa.pos.service.ProductService;
+import com.noa.pos.service.ProfileService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/")
 public class HomeController {
+
+    private final CompanyService companyService;
+    private final ProfileService profileService;
+
+    @Autowired
+    public HomeController(final CompanyService companyService, ProfileService profileService) {
+        this.companyService = companyService;
+        this.profileService = profileService;
+    }
 
     @GetMapping("/")
     public String index() {
@@ -24,7 +39,9 @@ public class HomeController {
     }
 
     @GetMapping("/home/register")
-    public String register() {
+    public String register(Model model) {
+        model.addAttribute("profiles", profileService.getAllEnabledProfiles());
+        model.addAttribute("companies", companyService.getAllCompanies());
         return "register";
     }
 }

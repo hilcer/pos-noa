@@ -7,6 +7,8 @@ import com.noa.pos.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProfileServiceImp implements ProfileService {
 
@@ -37,5 +39,15 @@ public class ProfileServiceImp implements ProfileService {
         dto.setLastUser(entity.getLastUser());
         dto.setLastTime(entity.getLastTime());
         return dto;
+    }
+
+    @Override
+    public List<ProfileDto> getAllEnabledProfiles() {
+        return profileRepository.getAllEnabledProfiles().stream().parallel().map(this::entityToDto).toList();
+    }
+
+    @Override
+    public ProfileDto getProfileByDescription(String description) {
+        return entityToDto(profileRepository.findByDescription(description));
     }
 }

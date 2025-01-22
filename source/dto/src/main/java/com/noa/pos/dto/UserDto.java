@@ -37,4 +37,6 @@ public class UserDto {
 	private LocalDateTime lastTime;
 	private Integer companyId;
 	private Integer sucursalId;
+	private String nameCompany;
+	private String descriptionProfile;
 }

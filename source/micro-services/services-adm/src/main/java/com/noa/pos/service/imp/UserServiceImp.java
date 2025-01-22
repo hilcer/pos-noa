@@ -3,6 +3,8 @@ package com.noa.pos.service.imp;
 import com.noa.pos.dto.UserDto;
 import com.noa.pos.model.entity.UserEntity;
 import com.noa.pos.model.repository.UserRepository;
+import com.noa.pos.service.CompanyService;
+import com.noa.pos.service.ProfileService;
 import com.noa.pos.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,11 +18,16 @@ public class UserServiceImp implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CompanyService companyService;
+    private final ProfileService profileService;
 
     @Autowired
-    UserServiceImp(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    UserServiceImp(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                   CompanyService companyService, ProfileService profileService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.companyService = companyService;
+        this.profileService = profileService;
     }
 
     @Override
@@ -29,9 +36,15 @@ public class UserServiceImp implements UserService {
         user.setLastUser("ADM");
         user.setLastTime(LocalDateTime.now());
         user.setEnabled(true);
-        user.setProfileId(1);
+        var nit = getNit(userDto.getNameCompany());
+        user.setProfileId(profileService.getProfileByDescription(userDto.getDescriptionProfile()).getProfileId());
+        user.setCompanyId(companyService.getByNit(nit).getCompanyId());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userToDto(userRepository.save(user));
+    }
+
+    private String getNit(String nameCompany) {
+        return nameCompany.substring(nameCompany.indexOf("(")+1,nameCompany.length()-1);
     }
 
     @Override

@@ -9,7 +9,8 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @Getter
 @Setter
-@Entity(name = "profile")
+@Entity
+@Table(name = "profile")
 public class ProfileEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
