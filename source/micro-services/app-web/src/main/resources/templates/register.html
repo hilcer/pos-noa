@@ -15,7 +15,7 @@
                         <p class="fs-4 text-center">¡Regístrate y empieza a vender!</p>
                     </div>
                     <div class="card-body">
-                        <form action="/user/register" method="post">
+                        <form id="formAddUser">
                             <div class="mb-3">
                                 <label class="form-label">Nombres</label>
                                 <input class="form-control" name="fullName" type="text" maxlength="150" minlength="6">
@@ -58,7 +58,7 @@
                                     <option th:each="c:${companies}">[[${c.nameCompany}]]([[${c.nit}]])</option>
                                 </select>
                             </div>
-                            <button type="submit" class="btn bg-primary text-white col-md-12">Crear cuenta</button>
+                            <button type="button" class="btn bg-primary text-white col-md-12" onclick="saveUser()">Crear cuenta</button>
                         </form>
                     </div>
                 </div>

@@ -15,7 +15,7 @@
                         <p class="fs-4 text-center">Editar producto</p>
                     </div>
                     <div class="card-body">
-                        <form action="/product/saveeditproduct" method="post" enctype="multipart/form-data">
+                        <form id="formEditProduct">
                             <input type="hidden" name="productId" th:value="${product.productId}">
                             <input type="hidden" name="code" th:value="${product.code}">
                             <div class="mb-3">
@@ -60,7 +60,7 @@
                                     Deshabilitado </label>
                                 </div>
                             </div>
-                            <button type="submit" class="btn bg-primary text-white col-md-12">Actualizar producto</button>
+                            <button type="button" class="btn bg-primary text-white col-md-12" onclick="updateProduct()">Actualizar producto</button>
                         </form>
                     </div>
                 </div>

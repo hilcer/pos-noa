@@ -6,10 +6,14 @@ window.fetch = async function (...args) {
     // Puedes modificar la solicitud aquí si es necesario
     let [resource, config] = args;
 
+    console.log('request:', config);
     if (config) {
+
         if (resource !== 'login') {
             const userData = JSON.parse(localStorage.getItem('userData'));
             config.headers['Authorization'] = 'Bearer '+userData.token;
+            //config.headers.push({Authorization: 'Bearer '+userData.token});
+            console.log('MODIFICARRRRRRR',config.headers);
         }
     }
     // Llamar al fetch original
@@ -446,4 +450,76 @@ async function exportarExcel() {
     if (rawResponse.ok) {
 
     }
+}
+
+async function updateProduct() {
+
+    const form = document.getElementById('formEditProduct');
+    const formData = new FormData(form); // Recoge automáticamente todos los datos del formulario
+
+    try {
+        const response = await fetch('/product/saveeditproduct', {
+            method: 'POST',
+            headers: {
+            },
+            body: formData
+        });
+
+        if (response.ok) {
+            window.location.href = "/product/products";
+        } else {
+            console.error('Failed to update product:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+
+}
+
+async function saveProduct() {
+
+    const form = document.getElementById('formAddProduct');
+    const formData = new FormData(form); // Recoge automáticamente todos los datos del formulario
+
+    try {
+        const response = await fetch('/product/saveproduct', {
+            method: 'POST',
+            headers: {
+            },
+            body: formData
+        });
+
+        if (response.ok) {
+            window.location.href = "/product/products";
+        } else {
+            console.error('Failed to save product:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+
+}
+
+async function saveUser() {
+
+    const form = document.getElementById('formAddUser');
+    const formData = new FormData(form); // Recoge automáticamente todos los datos del formulario
+
+    try {
+        const response = await fetch('/user/register', {
+            method: 'POST',
+            headers: {
+            },
+            body: formData
+        });
+
+        if (response.ok) {
+            window.location.href = "/home/register";
+        } else {
+            console.error('Failed to save user:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+
 }

@@ -15,7 +15,7 @@
                         <p class="fs-4 text-center">Nuevo producto</p>
                     </div>
                     <div class="card-body">
-                        <form action="/product/saveproduct" method="post" enctype="multipart/form-data">
+                        <form id="formAddProduct">
                             <div class="mb-3">
                                 <label class="form-label">Nombre de producto</label>
                                 <input class="form-control" name="name" type="text" maxlength="150"
@@ -56,7 +56,7 @@
                                     Deshabilitado </label>
                                 </div>
                             </div>
-                            <button type="submit" class="btn bg-primary text-white col-md-12">Crear producto</button>
+                            <button type="button" class="btn bg-primary text-white col-md-12" onclick="saveProduct()">Crear producto</button>
                         </form>
                     </div>
                 </div>

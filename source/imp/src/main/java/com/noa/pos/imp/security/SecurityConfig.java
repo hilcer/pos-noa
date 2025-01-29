@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -56,7 +57,7 @@ public class SecurityConfig {
 
         http.csrf(AbstractHttpConfigurer::disable).cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/**").permitAll()
                         .anyRequest().authenticated()
                 ).addFilter(new JwtAuthenticationFilterNew(authenticationManager()))
                 .addFilter(new JwtValidationFilter(authenticationManager()))
