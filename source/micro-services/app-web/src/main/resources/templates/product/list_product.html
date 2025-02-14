@@ -42,7 +42,7 @@
                     <td>[[${p.productType}]]</td>
                     <td>[[${p.price}]]</td>
                     <td>[[${p.enabled}]]</td>
-                    <td><img th:src="@{'/img/product_img/'+${p.image}}" width="50px" height="50px"></td>
+                    <td><img th:src="@{'/product_img/'+${p.image}}" width="50px" height="50px"></td>
                     <td>
                         <a th:href="@{'/product/editproduct/'+${p.productId}}"
                            class="btn btn-sm btn-secondary">Editar</a>

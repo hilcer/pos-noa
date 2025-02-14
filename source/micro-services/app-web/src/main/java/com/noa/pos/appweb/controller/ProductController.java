@@ -1,5 +1,6 @@
 package com.noa.pos.appweb.controller;
 
+import com.noa.pos.appweb.config.WebResourcesConfigure;
 import com.noa.pos.dto.ProductDto;
 import com.noa.pos.imp.constant.DomainConstant;
 import com.noa.pos.model.entity.ProductEntity;
@@ -30,13 +31,15 @@ public class ProductController {
     private final DomainService domainService;
     private final CompanyService companyService;
 
+    private final WebResourcesConfigure webResourcesConfigure;
 
     @Autowired
     public ProductController(final ProductService productService, final DomainService domainService,
-                             final CompanyService companyService) {
+                             final CompanyService companyService, WebResourcesConfigure webResourcesConfigure) {
         this.productService = productService;
         this.domainService = domainService;
         this.companyService = companyService;
+        this.webResourcesConfigure = webResourcesConfigure;
     }
 
     @GetMapping("/")
@@ -105,9 +108,9 @@ public class ProductController {
             session.setAttribute("errorMsg", "No se pudo guardar el producto");
         } else {
             try {
-                File saveFile = new ClassPathResource("static/img").getFile();
+                File saveFile = new File(webResourcesConfigure.pathImages);
 
-                Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "product_img" + File.separator
+                Path path = Paths.get(saveFile.getAbsolutePath() + File.separator
                         + file.getOriginalFilename());
                 // System.out.println(path);
                 Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
@@ -148,10 +151,10 @@ public class ProductController {
             session.setAttribute("errorMsg", "No se pudo guardar el producto");
         } else {
             try {
-                File saveFile = new ClassPathResource("static/img").getFile();
+                File saveFile = new File(webResourcesConfigure.pathImages);
 
                 if (!file.getOriginalFilename().isBlank()) {
-                    Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "product_img" + File.separator
+                    Path path = Paths.get(saveFile.getAbsolutePath() + File.separator
                             + file.getOriginalFilename());
                     // System.out.println(path);
                     Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);

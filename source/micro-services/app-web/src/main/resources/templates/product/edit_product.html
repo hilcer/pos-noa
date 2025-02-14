@@ -40,7 +40,7 @@
                                 <input class="form-control" name="price" type="number" maxlength="20"
                                        minlength="3" th:value="${product.price}">
                             </div>
-                            <div><img th:src="@{'/img/product_img/'+${product.image}}" width="50px" height="50px"></div>
+                            <div><img th:src="@{'/product_img/'+${product.image}}" width="50px" height="50px"></div>
                             <div class="mb-3">
                                 <label class="form-label">Imagen</label>
                                 <input class="form-control" name="imageReq" type="file">
