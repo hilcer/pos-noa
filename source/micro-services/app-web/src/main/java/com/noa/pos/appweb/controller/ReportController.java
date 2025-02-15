@@ -108,6 +108,7 @@ public class ReportController {
             var excelbyte = serviceExport.generateReport(listOrderSales);
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Reporte-"+ LocalDateTime.now() +".xlsx")
+                    .header(HttpHeaders.CONTENT_TYPE, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                     .body(excelbyte);
         } catch (IOException e) {
             e.printStackTrace();
@@ -158,6 +159,7 @@ public class ReportController {
             var excelbyte = exportServiceProduct.generateReportByProd(listOrderSales);
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ReporteProd-"+ LocalDateTime.now() +".xlsx")
+                    .header(HttpHeaders.CONTENT_TYPE, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                     .body(excelbyte);
         } catch (IOException e) {
             e.printStackTrace();
