@@ -5,9 +5,7 @@ import com.noa.pos.dto.OrderSalesDetailDto;
 import com.noa.pos.dto.OrderSalesDto;
 import com.noa.pos.imp.constant.DomainConstant;
 import com.noa.pos.imp.constant.OrderState;
-import com.noa.pos.model.dto.ReportOrderSalesDetailDto;
-import com.noa.pos.model.dto.ReportOrderSalesDto;
-import com.noa.pos.model.dto.ReportOrderSalesProdDto;
+import com.noa.pos.model.dto.*;
 import com.noa.pos.model.entity.OrderSalesDetailEntity;
 import com.noa.pos.model.entity.OrderSalesEntity;
 import com.noa.pos.model.repository.OrderSalesDetailRepository;
@@ -119,12 +117,22 @@ public class OrderServicesImp implements OrderService {
         return orderSalesDetailRepository.findByOrderSalesDetail(orderId).stream().parallel().toList();
     }
 
+    public List<Dashboard7DayDto> findByOrderLas7Day(String user) {
+        var companyId = userService.getUserByUser(user).getCompanyId();
+        return orderSalesDetailRepository.findByOrderLas7Day(companyId);
+    }
+
+    public List<DashboardTopProductDto> findTopProductDay(String user) {
+        var companyId = userService.getUserByUser(user).getCompanyId();
+        return orderSalesDetailRepository.findTopProductDay(companyId);
+    }
+
     private OrderSalesEntity dtoToEntity(OrderSalesDto salesDto) {
         var entity = new OrderSalesEntity();
         entity.setTicketNumber(salesDto.getTicketNumber());
         entity.setTotalAmount(salesDto.getTotalAmount());
         entity.setState(salesDto.getState());
-        entity.setDateRegister(LocalDate.now().toString());
+        entity.setDateRegister(LocalDate.now());
         entity.setCompanyId(salesDto.getCompanyId());
         entity.setSucursalId(salesDto.getSucursalId());
         entity.setTypePayment(salesDto.getTypePayment());
@@ -139,7 +147,7 @@ public class OrderServicesImp implements OrderService {
         orderSales.setTicketNumber(salesEntity.getTicketNumber());
         orderSales.setTotalAmount(salesEntity.getTotalAmount());
         orderSales.setState(salesEntity.getState());
-        orderSales.setDateRegister(salesEntity.getDateRegister());
+        orderSales.setDateRegister(salesEntity.getDateRegister().toString());
         orderSales.setCompanyId(salesEntity.getCompanyId());
         orderSales.setSucursalId(salesEntity.getSucursalId());
         orderSales.setLastUser(salesEntity.getLastUser());

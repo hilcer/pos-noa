@@ -51,6 +51,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     enabledButon();
     cargarMenuLeft();
+    reloadGraficoSemana();
+    reloadGraficoTopProduct();
 });
 
 async function agregarProducto(any) {
@@ -413,7 +415,8 @@ async function cargarMenuLeft() {
                 '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"aria-expanded="false">Reportes</a><ul class="dropdown-menu">' +
                     '<li><a class="dropdown-item" aria-current="page" href="/report/reportsales">Reporte de ventas</a></li><li><a class="dropdown-item" aria-current="page" href="/report/reportsalesprod">Control de ventas producto</a></li></ul></li>' +
                 '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"aria-expanded="false">Administracion</a><ul class="dropdown-menu">' +
-                    '<li><a class="dropdown-item" aria-current="page" href="/home/register">Reg. Usuario</a></li></ul></li>';
+                    '<li><a class="dropdown-item" aria-current="page" href="/home/register">Reg. Usuario</a></li></ul></li>' +
+                '<li class="nav-item"><a class="nav-link" aria-current="page" onclick="redireccionarDashboard()">Dashboard</a></li>';
             document.getElementById('limenureplacerigth').outerHTML = '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Perfil</a><ul class="dropdown-menu"><li><a class="dropdown-item" aria-current="page" href="/">Cerrar session</a></li></ul></li>';
         }
 
@@ -421,7 +424,8 @@ async function cargarMenuLeft() {
             document.getElementById('limenureplace').outerHTML = '<li class="nav-item"><a class="nav-link" aria-current="page" href="/venta/">Venta</a></li>' +
                 '<li class="nav-item"><a class="nav-link" aria-current="page" href="/product/products">Productos</a></li>' +
                 '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"aria-expanded="false">Reportes</a><ul class="dropdown-menu">' +
-                '<li><a class="dropdown-item" aria-current="page" href="/report/reportsales">Reporte de ventas</a></li><li><a class="dropdown-item" aria-current="page" href="/report/reportsalesprod">Control de ventas producto</a></li></ul></li>';
+                '<li><a class="dropdown-item" aria-current="page" href="/report/reportsales">Reporte de ventas</a></li><li><a class="dropdown-item" aria-current="page" href="/report/reportsalesprod">Control de ventas producto</a></li></ul></li>'+
+                '<li class="nav-item"><a class="nav-link"aria-current="page" href="/report/dashboard">Dashboard</a></li>';
             document.getElementById('limenureplacerigth').outerHTML = '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Perfil</a><ul class="dropdown-menu"><li><a class="dropdown-item" aria-current="page" href="/">Cerrar session</a></li></ul></li>';
         }
 
@@ -522,4 +526,118 @@ async function saveUser() {
         console.error('Error:', error);
     }
 
+}
+
+async function redireccionarDashboard() {
+
+    const userDataStore = JSON.parse(localStorage.getItem('userData'));
+    const userData = {
+        username: userDataStore.user
+    }
+
+    const rawResponse = await fetch('/report/dashboarddetail', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData)
+    });
+
+    const responseToken = await rawResponse.json();
+
+    console.log('dashboarddetail', responseToken);
+    if (rawResponse.ok) {
+        localStorage.setItem('infoDashboard', JSON.stringify(responseToken));
+        window.location.href = "/report/dashboard";
+        //loadVenta(responseToken.token);
+    }
+
+}
+async function reloadGraficoSemana() {
+    const infoDashboard = JSON.parse(localStorage.getItem('infoDashboard'));
+    const ctx = document.getElementById('miGraficoSemana');
+    const dashboard7DayDtos = infoDashboard.dashboard7DayDtos;
+    let dias = [];
+    let cantVentaXdias = [];
+    for (const clave in dashboard7DayDtos) {
+        if (clave !== null && clave !== undefined) {
+            const dia = dashboard7DayDtos[clave];
+            console.log('dias', dia);
+            dias.push(dia.day + '('+ dia.date +')');
+            cantVentaXdias.push(dia.quantity);
+        }
+    }
+
+    console.log('dias', dias);
+    console.log('cantVentaXdias', cantVentaXdias);
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: dias,
+            datasets: [{
+                label: '# ventas',
+                data: cantVentaXdias,
+                borderWidth: 1,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(255, 205, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(201, 203, 207, 1)',
+                ],
+            }]
+        },
+        options: {
+            responsive: true,
+        }
+    });
+}
+
+async function reloadGraficoTopProduct() {
+
+    const infoDashboard = JSON.parse(localStorage.getItem('infoDashboard'));
+    const ctx = document.getElementById('miGraficoTopProduct');
+    const dashboardTopProductDtos = infoDashboard.dashboardTopProductDtos;
+    let productos = [];
+    let cantidades = [];
+    for (const clave in dashboardTopProductDtos) {
+        if (clave !== null && clave !== undefined) {
+            const producto = dashboardTopProductDtos[clave];
+            console.log('producto', producto);
+            productos.push(producto.name + '('+ producto.price +'Bs)');
+            cantidades.push(producto.quantity);
+        }
+    }
+
+    console.log('dias', productos);
+    console.log('cantVentaXdias', cantidades);
+
+    const data = {
+        labels: productos,
+        datasets: [{
+            label: '# productos vendidos',
+            data: cantidades,
+            backgroundColor: [
+                'rgb(255, 99, 132)',
+                'rgb(54, 162, 235)',
+                'rgb(255, 205, 86)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(201, 203, 207, 1)'
+            ],
+            hoverOffset: 4
+        }]
+    };
+
+    const config = {
+        type: 'doughnut',
+        data: data,
+        options: {
+            responsive: true,
+        }
+    };
+
+    new Chart(ctx, config);
 }

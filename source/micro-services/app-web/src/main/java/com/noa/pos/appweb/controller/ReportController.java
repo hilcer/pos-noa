@@ -1,9 +1,10 @@
 package com.noa.pos.appweb.controller;
 
+import com.noa.pos.dto.DashboarDetailDto;
 import com.noa.pos.dto.OrderSalesDto;
+import com.noa.pos.dto.UserDto;
 import com.noa.pos.imp.constant.DomainConstant;
-import com.noa.pos.model.dto.ReportOrderSalesDto;
-import com.noa.pos.model.dto.ReportOrderSalesProdDto;
+import com.noa.pos.model.dto.*;
 import com.noa.pos.model.entity.OrderSalesEntity;
 import com.noa.pos.service.*;
 import com.noa.pos.service.imp.ExportPdfProdServiceImp;
@@ -15,16 +16,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.AbstractMap;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/report")
@@ -34,6 +35,15 @@ public class ReportController {
     private final ProductService productService;
     private final DomainService domainService;
     private final ExportServiceProduct exportServiceProduct;
+    private static final Map<String, String> semanas=  Map.of(
+            "Sunday", "Domingo",
+            "Monday", "Lunes",
+            "Tuesday", "Martes",
+            "Wednesday", "Miercoles",
+            "Thursday", "Jueves",
+            "Friday", "Viernes",
+            "Saturday", "Sabado"
+            );
 
     @Autowired
     public ReportController(final OrderService orderService,
@@ -96,6 +106,34 @@ public class ReportController {
 
 
         return "report/report_sales_detail";
+    }
+
+    @GetMapping("/dashboard")
+    public String dashboard(Model model) {
+
+//        model.addAttribute("dasboard", id);
+
+        return "dashboard/dashboard";
+    }
+
+    @PostMapping("/dashboarddetail")
+    public ResponseEntity<?> registrarorden(@RequestBody UserDto userDto) {
+
+        List<Dashboard7DayDto> orderSales;
+        List<DashboardTopProductDto> topProductDtos;
+        try {
+            orderSales = orderService.findByOrderLas7Day(userDto.getUsername());
+            topProductDtos = orderService.findTopProductDay(userDto.getUsername());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        DashboarReportDto dashboarReportDto = new DashboarReportDto();
+        orderSales.forEach( x -> {
+            x.setDay(semanas.get(x.getDay()));
+        });
+        dashboarReportDto.setDashboard7DayDtos(orderSales);
+        dashboarReportDto.setDashboardTopProductDtos(topProductDtos);
+        return dashboarReportDto != null ? ResponseEntity.ok(dashboarReportDto) : ResponseEntity.notFound().build();
     }
 
     @GetMapping("/exportexcel")

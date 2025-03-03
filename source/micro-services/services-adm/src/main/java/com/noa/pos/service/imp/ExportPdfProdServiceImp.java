@@ -82,7 +82,7 @@ public class ExportPdfProdServiceImp implements ExportServiceProduct {
                         order.getTicketNumber(),
                         order.getPrice().multiply(new BigDecimal(order.getQuantity())),
                         null,
-                        order.getDateRegister(),
+                        order.getDateRegister().toString(),
                         null,
                         null,
                         null,

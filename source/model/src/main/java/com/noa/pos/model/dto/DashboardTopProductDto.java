@@ -11,14 +11,9 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Builder
-public class ReportOrderSalesProdDto {
-    private Long orderSalesId;
-    private Integer ticketNumber;
-    private String typePayment;
-    private Integer productId;
+public class DashboardTopProductDto {
     private String name;
     private BigDecimal price;
-    private LocalDate dateRegister;
     private Long quantity;
 }
 

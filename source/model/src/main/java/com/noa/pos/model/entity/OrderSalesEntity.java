@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
@@ -24,7 +25,7 @@ public class OrderSalesEntity {
     private Integer ticketNumber;
     private BigDecimal totalAmount;
     private String state;
-    private String dateRegister;
+    private LocalDate dateRegister;
     private Integer companyId;
     private Integer sucursalId;
     private String typePayment;
