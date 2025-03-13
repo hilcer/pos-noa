@@ -3,6 +3,8 @@ package com.noa.pos.appweb.controller;
 import com.noa.pos.appweb.config.WebResourcesConfigure;
 import com.noa.pos.dto.ProductDto;
 import com.noa.pos.imp.constant.DomainConstant;
+import com.noa.pos.imp.exception.ProductDuplicateException;
+import com.noa.pos.imp.exception.ProductNotFoundException;
 import com.noa.pos.model.entity.ProductEntity;
 import com.noa.pos.service.CompanyService;
 import com.noa.pos.service.DomainService;
@@ -29,16 +31,14 @@ public class ProductController {
 
     private final ProductService productService;
     private final DomainService domainService;
-    private final CompanyService companyService;
 
     private final WebResourcesConfigure webResourcesConfigure;
 
     @Autowired
     public ProductController(final ProductService productService, final DomainService domainService,
-                             final CompanyService companyService, WebResourcesConfigure webResourcesConfigure) {
+                              WebResourcesConfigure webResourcesConfigure) {
         this.productService = productService;
         this.domainService = domainService;
-        this.companyService = companyService;
         this.webResourcesConfigure = webResourcesConfigure;
     }
 
@@ -83,44 +83,30 @@ public class ProductController {
     @PostMapping("/saveproduct")
     public String saveProduct(@ModelAttribute ProductDto product, @RequestParam("imageReq") MultipartFile file, HttpSession session) {
 
-        var imageName = file != null ? file.getOriginalFilename() : "default.jpg";
-        product.setImage(imageName);
-
-        var exist = false;
         try {
-            exist = productService.existProductByNamw(product.getName());
-        } catch (Exception e) {
-            session.setAttribute("errorMsg", "Problemas al buscar producto");
-            return "redirect:/product/";
-        }
-        // validar si es existe el producto
-        if (exist) {
+            productService.saveProduct(product, file);
+        } catch (ProductDuplicateException e) {
             session.setAttribute("errorMsg", "El producto ya existe");
             return "redirect:/product/";
-        }
-
-        product.setCode(productService.getCode(product.getName(), product.getProductType()));
-        var company = companyService.getByNit(domainService.getDomainGroupAndName(DomainConstant.CONFIGURATION, DomainConstant.DEFAULT_COMPANY).getValue());
-        product.setCompanyId(company.getCompanyId());
-        var producto = productService.saveProduct(product);
-
-        if (producto == null) {
+        } catch (ProductNotFoundException e) {
+            session.setAttribute("errorMsg", "Problemas al buscar producto");
+            return "redirect:/product/";
+        } catch (Exception e) {
             session.setAttribute("errorMsg", "No se pudo guardar el producto");
-        } else {
-            try {
-                File saveFile = new File(webResourcesConfigure.pathImages);
-
-                Path path = Paths.get(saveFile.getAbsolutePath() + File.separator
-                        + file.getOriginalFilename());
-                // System.out.println(path);
-                Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                session.setAttribute("errorMsg", "Problemas al guardar la imagen");
-            }
-            session.setAttribute("succesMsg", "Producto guardado");
+            return "redirect:/product/";
         }
+
+        try {
+            File saveFile = new File(webResourcesConfigure.pathImages);
+
+            Path path = Paths.get(saveFile.getAbsolutePath() + File.separator
+                    + file.getOriginalFilename());
+            Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+        } catch (Exception e) {
+            e.printStackTrace();
+            session.setAttribute("errorMsg", "Problemas al guardar la imagen");
+        }
+        session.setAttribute("succesMsg", "Producto guardado");
 
         return "redirect:/product/";
     }
@@ -145,7 +131,13 @@ public class ProductController {
         var imageName = file != null && !file.isEmpty() ? file.getOriginalFilename() : exist.getImage();
         product.setImage(imageName);
 
-        var producto = productService.mergeProduct(product);
+        ProductDto producto;
+        try {
+            producto = productService.mergeProduct(product);
+        } catch (Exception e) {
+            session.setAttribute("errorMsg", "No se pudo guardar el producto");
+            return "redirect:/product/";
+        }
 
         if (producto == null) {
             session.setAttribute("errorMsg", "No se pudo guardar el producto");

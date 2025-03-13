@@ -1,15 +1,22 @@
 package com.noa.pos.service.imp;
 
 import com.noa.pos.dto.ProductDto;
+import com.noa.pos.imp.constant.DomainConstant;
+import com.noa.pos.imp.exception.ProductDuplicateException;
+import com.noa.pos.imp.exception.ProductNotFoundException;
 import com.noa.pos.model.entity.ProductEntity;
 import com.noa.pos.model.repository.DomainRepository;
 import com.noa.pos.model.repository.ProductRepository;
+import com.noa.pos.service.CompanyService;
+import com.noa.pos.service.DomainService;
 import com.noa.pos.service.ProductService;
+import com.noa.pos.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,26 +24,50 @@ import java.util.List;
 @Service
 public class ProductServiceImp implements ProductService {
 
+    //private static final LOGGER
+
     private final ProductRepository productRepository;
+    private final UserService userService;
 
     @Autowired
-    public ProductServiceImp(ProductRepository domainRepository) {
-        this.productRepository = domainRepository;
+    public ProductServiceImp(ProductRepository productRepository, UserService userService) {
+        this.productRepository = productRepository;
+        this.userService = userService;
     }
 
     @Override
-    public ProductDto saveProduct(ProductDto user) {
-        var entity = dtoToEntity(user);
+    public ProductDto saveProduct(ProductDto product, MultipartFile file) throws Exception {
+
+        var imageName = file != null ? file.getOriginalFilename() : "default.jpg";
+        product.setImage(imageName);
+
+        var exist = false;
+        try {
+            exist = existProductByNamw(product.getName());
+        } catch (Exception e) {
+            throw new ProductNotFoundException("errorMsg", "Problemas al buscar producto");
+        }
+        // validar si es existe el producto
+        if (exist) {
+            throw new ProductDuplicateException("errorMsg", "El producto ya existe");
+        }
+
+        product.setCode(getCode(product.getName(), product.getProductType()));
+        var userName = userService.getUserByUser(product.getLastUser());
+        product.setCompanyId(userName.getCompanyId());
+
+
+        var entity = dtoToEntity(product);
         entity = productRepository.save(entity);
         return entityToDto(entity);
     }
 
     @Override
-    public ProductDto mergeProduct(ProductDto user) {
+    public ProductDto mergeProduct(ProductDto product) throws Exception {
 
-        var entity = productRepository.findById(user.getProductId()).orElse(null);
+        var entity = productRepository.findById(product.getProductId()).orElse(null);
 
-        mrgeDtoToEntity(user, entity);
+        mrgeDtoToEntity(product, entity);
         entity = productRepository.save(entity);
         return entityToDto(entity);
     }

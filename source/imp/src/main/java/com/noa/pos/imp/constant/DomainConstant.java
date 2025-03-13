@@ -13,4 +13,6 @@ public class DomainConstant {
     public static final String DEFAULT_COMPANY = "DEFAULT_COMPANY";
     public static final String SEQUENCE_TICKET = "SEQUENCE_TICKET";
     public static final String SEQUENCE_DATE = "SEQUENCE_DATE";
+    public static final String ENABLED_PETITION = "ENABLED_PETITION";
+
 }

@@ -28,6 +28,8 @@ public interface OrderService {
 
     List<OrderSalesDto> searchOrderSales(String dateFrom, String dateTo);
 
+    List<OrderSalesDto> searchOrderSalesPending(String dateFrom, String dateTo, String user);
+
     List<ReportOrderSalesProdDto> searchOrderSalesByProd(String dateFrom, String dateTo);
 
     Page<OrderSalesEntity> getAllOrderSalesPagination(Integer pageNo, Integer pageSize);

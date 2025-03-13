@@ -11,9 +11,9 @@ window.fetch = async function (...args) {
 
         if (resource !== 'login') {
             const userData = JSON.parse(localStorage.getItem('userData'));
-            config.headers['Authorization'] = 'Bearer '+userData.token;
+            config.headers['Authorization'] = 'Bearer ' + userData.token;
             //config.headers.push({Authorization: 'Bearer '+userData.token});
-            console.log('MODIFICARRRRRRR',config.headers);
+            console.log('MODIFICARRRRRRR', config.headers);
         }
     }
     // Llamar al fetch original
@@ -53,6 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
     cargarMenuLeft();
     reloadGraficoSemana();
     reloadGraficoTopProduct();
+    actualizarOrdenPendiente();
 });
 
 async function agregarProducto(any) {
@@ -241,8 +242,8 @@ async function registrarOrden() {
 
     let checkedSelect;
     const inputChecks = document.querySelectorAll('.form-check-input');
-    inputChecks.forEach( check => {
-            if (check.checked){
+    inputChecks.forEach(check => {
+            if (check.checked) {
                 checkedSelect = check;
             }
         }
@@ -409,34 +410,35 @@ async function loadVenta(token) {
 async function cargarMenuLeft() {
     const userData = JSON.parse(localStorage.getItem('userData'));
     if (userData) {
-        if (userData.role === '[ROLE_SUPERADM]'){
+        if (userData.role === '[ROLE_SUPERADM]') {
             document.getElementById('limenureplace').outerHTML = '<li class="nav-item"><a class="nav-link" aria-current="page" href="/venta/">Venta</a></li>' +
                 '<li class="nav-item"><a class="nav-link" aria-current="page" href="/product/products">Productos</a></li>' +
                 '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"aria-expanded="false">Reportes</a><ul class="dropdown-menu">' +
-                    '<li><a class="dropdown-item" aria-current="page" href="/report/reportsales">Reporte de ventas</a></li><li><a class="dropdown-item" aria-current="page" href="/report/reportsalesprod">Control de ventas producto</a></li></ul></li>' +
+                '<li><a class="dropdown-item" aria-current="page" href="/report/reportsales">Reporte de ventas</a></li><li><a class="dropdown-item" aria-current="page" href="/report/reportsalesprod">Control de ventas producto</a></li></ul></li>' +
                 '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"aria-expanded="false">Administracion</a><ul class="dropdown-menu">' +
-                    '<li><a class="dropdown-item" aria-current="page" href="/home/register">Reg. Usuario</a></li></ul></li>' +
+                '<li><a class="dropdown-item" aria-current="page" href="/home/register">Reg. Usuario</a></li></ul></li>' +
+                '<li class="nav-item"><a class="nav-link" aria-current="page" onclick="ordenesPendientes()">Ordenes pendientes</a></li>' +
                 '<li class="nav-item"><a class="nav-link" aria-current="page" onclick="redireccionarDashboard()">Dashboard</a></li>';
             document.getElementById('limenureplacerigth').outerHTML = '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Perfil</a><ul class="dropdown-menu"><li><a class="dropdown-item" aria-current="page" href="/">Cerrar session</a></li></ul></li>';
         }
 
-        if (userData.role === '[ROLE_ADMIN]'){
+        if (userData.role === '[ROLE_ADMIN]') {
             document.getElementById('limenureplace').outerHTML = '<li class="nav-item"><a class="nav-link" aria-current="page" href="/venta/">Venta</a></li>' +
                 '<li class="nav-item"><a class="nav-link" aria-current="page" href="/product/products">Productos</a></li>' +
                 '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"aria-expanded="false">Reportes</a><ul class="dropdown-menu">' +
-                '<li><a class="dropdown-item" aria-current="page" href="/report/reportsales">Reporte de ventas</a></li><li><a class="dropdown-item" aria-current="page" href="/report/reportsalesprod">Control de ventas producto</a></li></ul></li>'+
-                '<li class="nav-item"><a class="nav-link"aria-current="page" href="/report/dashboard">Dashboard</a></li>';
+                '<li><a class="dropdown-item" aria-current="page" href="/report/reportsales">Reporte de ventas</a></li><li><a class="dropdown-item" aria-current="page" href="/report/reportsalesprod">Control de ventas producto</a></li></ul></li>' +
+                '<li class="nav-item"><a class="nav-link" aria-current="page" href="/report/dashboard">Dashboard</a></li>';
             document.getElementById('limenureplacerigth').outerHTML = '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Perfil</a><ul class="dropdown-menu"><li><a class="dropdown-item" aria-current="page" href="/">Cerrar session</a></li></ul></li>';
         }
 
-        if (userData.role === '[ROLE_CAJERO]'){
+        if (userData.role === '[ROLE_CAJERO]') {
             document.getElementById('limenureplace').outerHTML = '<li class="nav-item"><a class="nav-link" aria-current="page" href="/venta/">Venta</a></li>';
             document.getElementById('limenureplacerigth').outerHTML = '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Perfil</a><ul class="dropdown-menu"><li><a class="dropdown-item" aria-current="page" href="/">Cerrar session</a></li></ul></li>';
         }
 
-        if (userData.role === 'ROLE_REPORTE'){
+        if (userData.role === 'ROLE_REPORTE') {
         }
-    }else {
+    } else {
         document.getElementById('limenureplace').outerHTML = '<li id="limenureplace" ></li>';
         document.getElementById('limenureplacerigth').outerHTML = '<li id="limenureplacerigth" ><a class="nav-link active" aria-current="page" href="/">Ingreso</a></li>';
     }
@@ -459,13 +461,15 @@ async function exportarExcel() {
 async function updateProduct() {
 
     const form = document.getElementById('formEditProduct');
-    const formData = new FormData(form); // Recoge automáticamente todos los datos del formulario
+    let formData = new FormData(form); // Recoge automáticamente todos los datos del formulario
+
+    const userDataStore = JSON.parse(localStorage.getItem('userData'));
+    formData['lastUser'] = userDataStore.user
 
     try {
         const response = await fetch('/product/saveeditproduct', {
             method: 'POST',
-            headers: {
-            },
+            headers: {},
             body: formData
         });
 
@@ -485,11 +489,13 @@ async function saveProduct() {
     const form = document.getElementById('formAddProduct');
     const formData = new FormData(form); // Recoge automáticamente todos los datos del formulario
 
+    const userDataStore = JSON.parse(localStorage.getItem('userData'));
+    formData['lastUser'] = userDataStore.user
+
     try {
         const response = await fetch('/product/saveproduct', {
             method: 'POST',
-            headers: {
-            },
+            headers: {},
             body: formData
         });
 
@@ -512,8 +518,7 @@ async function saveUser() {
     try {
         const response = await fetch('/user/register', {
             method: 'POST',
-            headers: {
-            },
+            headers: {},
             body: formData
         });
 
@@ -554,6 +559,7 @@ async function redireccionarDashboard() {
     }
 
 }
+
 async function reloadGraficoSemana() {
     const infoDashboard = JSON.parse(localStorage.getItem('infoDashboard'));
     const ctx = document.getElementById('miGraficoSemana');
@@ -564,7 +570,7 @@ async function reloadGraficoSemana() {
         if (clave !== null && clave !== undefined) {
             const dia = dashboard7DayDtos[clave];
             console.log('dias', dia);
-            dias.push(dia.day + '('+ dia.date +')');
+            dias.push(dia.day + '(' + dia.date + ')');
             cantVentaXdias.push(dia.quantity);
         }
     }
@@ -607,7 +613,7 @@ async function reloadGraficoTopProduct() {
         if (clave !== null && clave !== undefined) {
             const producto = dashboardTopProductDtos[clave];
             console.log('producto', producto);
-            productos.push(producto.name + '('+ producto.price +'Bs)');
+            productos.push(producto.name + '(' + producto.price + 'Bs)');
             cantidades.push(producto.quantity);
         }
     }
@@ -640,4 +646,52 @@ async function reloadGraficoTopProduct() {
     };
 
     new Chart(ctx, config);
+}
+
+async function ordenesPendientes() {
+
+    const userDataStore = JSON.parse(localStorage.getItem('userData'));
+    const userData = {
+        lastUser: userDataStore.user
+    }
+
+    const rawResponse = await fetch('/venta/ordenespending', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData)
+    });
+
+    const responseToken = await rawResponse.json();
+
+    console.log('infoOrdersPending', responseToken);
+    if (rawResponse.ok) {
+        localStorage.setItem('infoOrdersPending', JSON.stringify(responseToken));
+        window.location.href = "/venta/ordenpending";
+        //loadVenta(responseToken.token);
+    }
+}
+
+async function actualizarOrdenPendiente() {
+
+    const orders = JSON.parse(localStorage.getItem('infoOrdersPending'));
+
+    let litadoOrden = '';
+    for (const clave in orders) {
+        if (clave !== null && clave !== undefined) {
+            const valor = orders[clave];
+            let productHtml = '<tr>\n' +
+                '<td>' + valor.ticketNumber + '</td>\n' +
+                '<td>' + valor.lastUser + '</td>\n' +
+                '<td>' + valor.totalAmount + '</td>\n' +
+                '<td>' + valor.dateRegister + '</td>\n' +
+                '<td>' + valor.state + '</td>\n' +
+                '<td>' + valor.state + '</td>\n' +
+                '</tr>';
+            litadoOrden += productHtml;
+        }
+    }
+    document.querySelector('#orderpending tbody').outerHTML = litadoOrden;
 }

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -56,6 +57,23 @@ public class VentaController {
 //        model.addAttribute("products", productService.getAllProducts());
 
         return "venta/orden";
+    }
+
+    @GetMapping("/ordenpending")
+    public String ordenpending(Model model) {
+
+//        model.addAttribute("products", productService.getAllProducts());
+
+        return "venta/pending/pending_order";
+    }
+
+    @PostMapping("/ordenespending")
+    public ResponseEntity<?> ordenespending(@RequestBody OrderSalesDto orderSalesDto) {
+        var dateFrom = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        var dateTo = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        var listOrderSales = orderService.searchOrderSalesPending(dateFrom, dateTo, orderSalesDto.getLastUser());
+
+        return listOrderSales != null ? ResponseEntity.ok(listOrderSales) : ResponseEntity.notFound().build();
     }
 
     @GetMapping("/notaventa")

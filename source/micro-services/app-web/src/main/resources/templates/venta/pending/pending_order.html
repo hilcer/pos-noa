@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{base::Layout(~{::section})}">
+<head>
+    <meta charset="UTF-8">
+    <title>Productos</title>
+</head>
+<body>
+<section>
+    <div class="container mt-5" style="max-width: 720px">
+        <div class="table-responsive">
+            <div class="card-header text-center fs-4">
+                <p class="fs-4">Ordenes en preparacion</p>
+            </div>
+            <table class="table" id="orderpending">
+                <thead>
+                <tr>
+                    <th scope="col">Nro. Ticket</th>
+                    <th scope="col">Cajero</th>
+                    <th scope="col">Importe Total</th>
+                    <th scope="col">Fecha Reg.</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

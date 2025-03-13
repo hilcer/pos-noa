@@ -4,14 +4,15 @@ import com.noa.pos.dto.PreOrderSalesDetailDto;
 import com.noa.pos.dto.ProductDto;
 import com.noa.pos.model.entity.ProductEntity;
 import org.springframework.data.domain.Page;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface ProductService {
 
-    ProductDto saveProduct(ProductDto user);
+    ProductDto saveProduct(ProductDto product, MultipartFile file) throws Exception;
 
-    ProductDto mergeProduct(ProductDto user);
+    ProductDto mergeProduct(ProductDto product) throws Exception;
 
     ProductDto getById(Integer id);
 

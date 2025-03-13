@@ -67,6 +67,8 @@ public class DomainServiceImp implements DomainService {
     }
 
     public DomainDto getDomainGroupAndName(String domainGroup, String domainName) {
-        return entityToDto(domainRepository.findByGroupDomAndName(domainGroup, domainName));
+        var entity = domainRepository.findByGroupDomAndName(domainGroup, domainName);
+        if (entity == null) { return null; }
+        return entityToDto(entity);
     }
 }

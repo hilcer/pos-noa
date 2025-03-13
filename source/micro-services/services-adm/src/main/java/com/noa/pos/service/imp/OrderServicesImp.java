@@ -54,7 +54,12 @@ public class OrderServicesImp implements OrderService {
 
         Integer nroTicket = getNextTicket();
         orderSalesDto.setTicketNumber(nroTicket);
-        orderSalesDto.setState(OrderState.PROCESSED.name());
+        var domGuardarPeticion = domainService.getDomainGroupAndName(DomainConstant.CONFIGURATION, DomainConstant.ENABLED_PETITION);
+        if (domGuardarPeticion != null && domGuardarPeticion.getValue().equals("SI")) {
+            orderSalesDto.setState(OrderState.PREPARING.name());
+        } else {
+            orderSalesDto.setState(OrderState.PROCESSED.name());
+        }
         var entity = dtoToEntity(orderSalesDto);
 
         orderSalesRepository.save(entity);
@@ -197,6 +202,14 @@ public class OrderServicesImp implements OrderService {
     public List<OrderSalesDto> searchOrderSales(String dateFrom, String dateTo) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return orderSalesRepository.findByLastTimeBetween(LocalDate.parse(dateFrom, formatter).atStartOfDay(), LocalDate.parse(dateTo, formatter).atTime(23,59,59)).stream().parallel().map(this::entityToDto).toList();
+    }
+
+    @Override
+    public List<OrderSalesDto> searchOrderSalesPending(String dateFrom, String dateTo, String user) {
+        var userDto = userService.getUserByUser(user);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return orderSalesRepository.findByLastTimeBetweenPending(LocalDate.parse(dateFrom, formatter).atStartOfDay(),
+                LocalDate.parse(dateTo, formatter).atTime(23,59,59), userDto.getCompanyId()).stream().parallel().map(this::entityToDto).toList();
     }
 
     @Override
