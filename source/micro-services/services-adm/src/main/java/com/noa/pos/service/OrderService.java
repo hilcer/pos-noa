@@ -14,6 +14,8 @@ public interface OrderService {
 
     OrderSalesDto saveOrders(OrderSalesDto orders) throws Exception;
 
+    OrderSalesDto updatePendingToProcessed(OrderSalesDto orders) throws Exception;
+
     List<OrderSalesDto> findAll();
 
     OrderSalesDto findById(Long id);

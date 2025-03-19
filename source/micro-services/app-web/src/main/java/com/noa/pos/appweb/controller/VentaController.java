@@ -76,6 +76,18 @@ public class VentaController {
         return listOrderSales != null ? ResponseEntity.ok(listOrderSales) : ResponseEntity.notFound().build();
     }
 
+    @PostMapping("/updateorderprocessed")
+    public ResponseEntity<?> updatePendingToProcessed(@RequestBody OrderSalesDto orderSalesDto) {
+        OrderSalesDto listOrderSales;
+        try {
+            listOrderSales = orderService.updatePendingToProcessed(orderSalesDto);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return listOrderSales != null ? ResponseEntity.ok(listOrderSales) : ResponseEntity.notFound().build();
+    }
+
     @GetMapping("/notaventa")
     public String notaVenta(Model model) {
 

@@ -709,19 +709,20 @@ async function actualizarOrdenPendiente() {
 
 async function confirmarEntrega(clave) {
     if (document.getElementById('confirmarentrega' + clave).textContent === 'Conf. Entrega') {
-        acatualizarOrdenEntregada(clave);
+        actualizarOrdenEntregada(clave);
     } else {
         document.getElementById('confirmarentrega' + clave).textContent = 'Conf. Entrega';
     }
 }
 
-async function acatualizarOrdenEntregada(clave) {
+async function actualizarOrdenEntregada(clave) {
     const userDataStore = JSON.parse(localStorage.getItem('userData'));
     const userData = {
-        lastUser: userDataStore.user
+        lastUser: userDataStore.user,
+        orderSalesId: clave
     }
 
-    const rawResponse = await fetch('/venta/ordenespending', {
+    const rawResponse = await fetch('/venta/updateorderprocessed', {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -732,11 +733,8 @@ async function acatualizarOrdenEntregada(clave) {
 
     const responseToken = await rawResponse.json();
 
-    console.log('infoOrdersPending', responseToken);
     if (rawResponse.ok) {
-        localStorage.setItem('infoOrdersPending', JSON.stringify(responseToken));
-        window.location.href = "/venta/ordenpending";
-        //loadVenta(responseToken.token);
+        ordenesPendientes()
     }
 }
 

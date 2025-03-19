@@ -44,7 +44,6 @@ public class OrderServicesImp implements OrderService {
         this.userService = userService;
     }
 
-    @Override
     public OrderSalesDto saveOrders(OrderSalesDto orderSalesDto) throws Exception {
 
         // Obtener informacion del usuario
@@ -75,6 +74,18 @@ public class OrderServicesImp implements OrderService {
         orderSalesDto = entityToDto(entity);
         orderSalesDto.setDetails(listDetail);
         return orderSalesDto;
+    }
+
+    @Override
+    public OrderSalesDto updatePendingToProcessed(OrderSalesDto orderSalesDto) throws Exception {
+        var order = orderSalesRepository.findById(orderSalesDto.getOrderSalesId()).orElse(null);
+        if (order == null) {
+            return null;
+        }
+        order.setState(OrderState.PROCESSED.name());
+        order.setLastTime(LocalDateTime.now());
+        orderSalesRepository.save(order);
+        return entityToDto(order);
     }
 
     private Integer getNextTicket() {
