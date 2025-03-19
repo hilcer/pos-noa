@@ -682,16 +682,103 @@ async function actualizarOrdenPendiente() {
     for (const clave in orders) {
         if (clave !== null && clave !== undefined) {
             const valor = orders[clave];
+
+            const textDisable = valor.state === 'PROCESSED'? 'disabled="true"' : '';
             let productHtml = '<tr>\n' +
                 '<td>' + valor.ticketNumber + '</td>\n' +
-                '<td>' + valor.lastUser + '</td>\n' +
                 '<td>' + valor.totalAmount + '</td>\n' +
-                '<td>' + valor.dateRegister + '</td>\n' +
                 '<td>' + valor.state + '</td>\n' +
-                '<td>' + valor.state + '</td>\n' +
+                '<td>\n' +
+                '<div class="dropdown">\n' +
+                '<button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" ' +
+                'id="detailorderprocess' + valor.orderSalesId + '" onclick="obtenerDetallePendiente(' + valor.orderSalesId + ')"> Mas Inf. </button>' +
+                '<ul class="dropdown-menu" id="detailorderprocessul' + valor.orderSalesId + '">\n' +
+                '    <li><a class="dropdown-item" href="#"></a></li>\n' +
+                '  </ul>\n' +
+                '</div>' +
+                '</td>' +
+                '<td>\n' +
+                '<button '+ textDisable+' type="button" class="btn btn-warning" id="confirmarentrega' + valor.orderSalesId + '" onclick="confirmarEntrega(' + valor.orderSalesId + ')"> Entregar </button>\n' +
+                '</td>' +
                 '</tr>';
             litadoOrden += productHtml;
         }
     }
     document.querySelector('#orderpending tbody').outerHTML = litadoOrden;
 }
+
+async function confirmarEntrega(clave) {
+    if (document.getElementById('confirmarentrega' + clave).textContent === 'Conf. Entrega') {
+        acatualizarOrdenEntregada(clave);
+    } else {
+        document.getElementById('confirmarentrega' + clave).textContent = 'Conf. Entrega';
+    }
+}
+
+async function acatualizarOrdenEntregada(clave) {
+    const userDataStore = JSON.parse(localStorage.getItem('userData'));
+    const userData = {
+        lastUser: userDataStore.user
+    }
+
+    const rawResponse = await fetch('/venta/ordenespending', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData)
+    });
+
+    const responseToken = await rawResponse.json();
+
+    console.log('infoOrdersPending', responseToken);
+    if (rawResponse.ok) {
+        localStorage.setItem('infoOrdersPending', JSON.stringify(responseToken));
+        window.location.href = "/venta/ordenpending";
+        //loadVenta(responseToken.token);
+    }
+}
+
+async function obtenerDetallePendiente(clave) {
+
+
+    const userDataStore = JSON.parse(localStorage.getItem('userData'));
+    const userData = {
+        lastUser: userDataStore.user
+    }
+
+    const url = '/report/reportsalesdetailul/' + clave;
+
+    const rawResponse = await fetch(url, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    });
+
+    const responseToken = await rawResponse.json();
+
+    console.log('reportsalesdetailUXXX', responseToken);
+    if (rawResponse.ok) {
+
+        const dialogExpander = document.getElementById('detailorderprocess' + clave).getAttribute('aria-expanded');
+        const valueExpanded = dialogExpander === 'true' ? ' show' : '';
+
+        let productHtml = '<ul class="dropdown-menu' + valueExpanded + '" id="detailorderprocessul' + clave + '" ' +
+            'style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(0px, 40px);" data-popper-placement="bottom-start">';
+
+
+        for (const clave in responseToken) {
+            if (clave !== null && clave !== undefined) {
+                const valor = responseToken[clave];
+                productHtml = productHtml +
+                    '    <li><a class="dropdown-item" href="#">' + valor.quantity + '-' + valor.name + '</a></li>';
+            }
+        }
+        productHtml = productHtml + '</ul>';
+        document.getElementById('detailorderprocessul' + clave).outerHTML = productHtml;
+    }
+}
+

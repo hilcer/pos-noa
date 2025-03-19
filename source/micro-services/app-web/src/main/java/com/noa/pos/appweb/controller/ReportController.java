@@ -108,6 +108,11 @@ public class ReportController {
         return "report/report_sales_detail";
     }
 
+    @GetMapping("/reportsalesdetailul/{id}")
+    public ResponseEntity<?> salesDetail(@PathVariable long id, Model model) {
+        return ResponseEntity.ok(orderService.findOrderSalesDetailByOrderId(id));
+    }
+
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
 

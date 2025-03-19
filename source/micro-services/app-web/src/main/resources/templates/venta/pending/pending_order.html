@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{base::Layout(~{::section})}">
+      th:replace="~{base::Layout(~{::section})}" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Productos</title>
@@ -16,10 +16,9 @@
                 <thead>
                 <tr>
                     <th scope="col">Nro. Ticket</th>
-                    <th scope="col">Cajero</th>
                     <th scope="col">Importe Total</th>
-                    <th scope="col">Fecha Reg.</th>
                     <th scope="col">Estado</th>
+                    <th scope="col">Detalle</th>
                     <th scope="col">Acciones</th>
                 </tr>
                 </thead>
@@ -28,7 +27,12 @@
                 </tr>
                 </tbody>
             </table>
-
+            <div class="card-header text-center fs-4">
+                </br>
+            </div>
+            <div class="card-header fs-4">
+                <p class="fs-4">Fin pagina</p>
+            </div>
         </div>
     </div>
 </section>
