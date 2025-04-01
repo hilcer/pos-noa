@@ -11,6 +11,8 @@ public interface DomainRepository extends JpaRepository<DomainEntity, Integer> {
 
     List<DomainEntity> findByGroupDom(String groupDom);
 
+    List<DomainEntity> findByGroupDomAndCompanyId(String groupDom, Integer companyId);
+
     DomainEntity findByGroupDomAndName(String groupDom, String domainName);
 
 }

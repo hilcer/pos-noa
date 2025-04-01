@@ -197,9 +197,19 @@ public class ProductServiceImp implements ProductService {
         return productRepository.findAllEnable().stream().parallel().map(this::entityToDto).toList();
     }
 
+    public List<ProductDto> findAllEnable(ProductDto user) {
+        var userName = userService.getUserByUser(user.getLastUser());
+        if (user.getProductType()!=null){
+            return productRepository.findByProductType(user.getProductType(), userName.getCompanyId()).stream().parallel().map(this::entityToDto).toList();
+        } else {
+            return productRepository.findAllEnable(userName.getCompanyId()).stream().parallel().map(this::entityToDto).toList();
+        }
+    }
+
     @Override
-    public List<ProductDto> findByProductType(String productType) {
-        return productRepository.findByProductType(productType).stream().parallel().map(this::entityToDto).toList();
+    public List<ProductDto> findByProductType(String productType, String user) {
+        var userName = userService.getUserByUser(user);
+        return productRepository.findByProductType(productType, userName.getCompanyId()).stream().parallel().map(this::entityToDto).toList();
     }
 
     @Override

@@ -20,7 +20,11 @@ public interface ProductService {
 
     List<ProductDto> findAllEnable();
 
-    List<ProductDto> findByProductType(String productType);
+    List<ProductDto> findAllEnable(ProductDto user);
+
+    //List<ProductDto> findByProductType(String productType);
+
+    List<ProductDto> findByProductType(String productType, String user);
 
     String getCode(String name, String productType);
 

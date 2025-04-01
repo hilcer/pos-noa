@@ -3,6 +3,7 @@ package com.noa.pos.service.imp;
 import com.noa.pos.dto.DomainDto;
 import com.noa.pos.model.entity.DomainEntity;
 import com.noa.pos.model.repository.DomainRepository;
+import com.noa.pos.model.repository.UserRepository;
 import com.noa.pos.service.DomainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,10 +14,12 @@ import java.util.List;
 public class DomainServiceImp implements DomainService {
 
     private final DomainRepository domainRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public DomainServiceImp(DomainRepository domainRepository) {
+    public DomainServiceImp(DomainRepository domainRepository, UserRepository userRepository) {
         this.domainRepository = domainRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -64,6 +67,11 @@ public class DomainServiceImp implements DomainService {
     @Override
     public List<DomainDto> getGropupDom(String group) {
         return domainRepository.findByGroupDom(group).stream().parallel().map(this::entityToDto).toList();
+    }
+
+    public List<DomainDto> getGropupDom(String group, String user) {
+        var userEntity = userRepository.findByUsername(user);
+        return domainRepository.findByGroupDomAndCompanyId(group, userEntity.getCompanyId()).stream().parallel().map(this::entityToDto).toList();
     }
 
     public DomainDto getDomainGroupAndName(String domainGroup, String domainName) {

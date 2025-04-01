@@ -33,22 +33,33 @@ public class VentaController {
         this.domainService = domainService;
     }
 
-    @GetMapping("/filterbytype/{name}")
-    public String filterbytype(@PathVariable String name, Model model) {
+    @PostMapping("/filterbytype")
+    public ResponseEntity<?> filterbytype(@RequestBody ProductDto productDto) {
 
-        model.addAttribute("products", productService.findByProductType(name));
-        model.addAttribute("productstype", domainService.getGropupDom(DomainConstant.PRODUCT_TYPE));
+        var products = productService.findByProductType(productDto.getProductType(), productDto.getLastUser());
+        var productstype = domainService.getGropupDom(DomainConstant.PRODUCT_TYPE, productDto.getLastUser());
+        VentaProductsDto ventaProductsDto = new VentaProductsDto(products, productstype);
 
-        return "venta/venta";
+        return ResponseEntity.ok(ventaProductsDto);
     }
 
     @GetMapping("/")
     public String home(Model model) {
 
-        model.addAttribute("products", productService.findAllEnable());
-        model.addAttribute("productstype", domainService.getGropupDom(DomainConstant.PRODUCT_TYPE));
+//        model.addAttribute("products", productService.findAllEnable(null));
+//        model.addAttribute("productstype", domainService.getGropupDom(DomainConstant.PRODUCT_TYPE));
 
         return "venta/venta";
+    }
+
+    @PostMapping("/findbyuser")
+    public ResponseEntity<?> listaVentaByUSer(@RequestBody ProductDto productDto) {
+
+        var products = productService.findAllEnable(productDto);
+        var productstype = domainService.getGropupDom(DomainConstant.PRODUCT_TYPE, productDto.getLastUser());
+        VentaProductsDto ventaProductsDto = new VentaProductsDto(products, productstype);
+
+        return ResponseEntity.ok(ventaProductsDto);
     }
 
     @GetMapping("/orden")

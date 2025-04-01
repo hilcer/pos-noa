@@ -54,12 +54,88 @@ document.addEventListener("DOMContentLoaded", () => {
     reloadGraficoSemana();
     reloadGraficoTopProduct();
     actualizarOrdenPendiente();
+    dibujarProductosVenta();
 });
 
-async function agregarProducto(any) {
+async function dibujarProductosVenta(any) {
+    const reponseVenta = JSON.parse(localStorage.getItem('productoVentaByUser'));
 
+    let tipoproductos = '<lu id="listtype" class="tabs-box"><li>\n' +
+        '                        <a class="tabs btn btn-secondary btn-sm" style="border-radius: 20px" onclick="listarProductosVenta()">Todos</a>\n' +
+        '                    </li>\n';
+    for (const clave in reponseVenta.productTypes) {
+        if (clave !== null && clave !== undefined) {
+            const valor = reponseVenta.productTypes[clave];
+            let productHtml = '<li>\n' +
+                '                        <a typename="'+valor.name+'" class="tabs btn btn-secondary btn-sm" style="border-radius: 20px" onclick="listarProductosVenta(this)">'+valor.value+'</a>\n' +
+                '                    </li>';
+            tipoproductos += productHtml;
+        }
+    }
+    document.querySelector('#listtype').outerHTML = tipoproductos + '</lu>';
+
+    let litadoProductosVenta = '';
+    for (const clave in reponseVenta.products) {
+        if (clave !== null && clave !== undefined) {
+            const valor = reponseVenta.products[clave];
+            let productHtml = '<tr>\n' +
+                '    <td>' + valor.name + '</td>\n' +
+                '    <td>Bs' + valor.price + '</td>\n' +
+                '    <td><img src="/product_img/' + valor.image + '" width="50px" height="50px"></td>\n' +
+                '    <td>\n' +
+                '        <button product-id="' + valor.productId + '"\n' +
+                '    name="' + valor.name + '"\n' +
+                '    price="' + valor.price + '"\n' +
+                '    image="' + valor.image + '" type="button" class="btn btn-danger" onclick="quitarProducto(this)">-</button>\n' +
+                '        <button product-id="' + valor.productId + '"\n' +
+                '    name="' + valor.name + '"\n' +
+                '    price="' + valor.price + '"\n' +
+                '    image="' + valor.image + '" type="button" class="btn btn-success" onclick="agregarProducto(this)">+</button>\n' +
+                '    </td>\n' +
+                '</tr>';
+            litadoProductosVenta += productHtml;
+        }
+    }
+    //document.querySelector('#resumentotal').textContent = 'Total: Bs' + localStorage.getItem('totalPrice');
+    document.querySelector('#productosventa tbody').outerHTML = litadoProductosVenta;
+}
+
+async function listarProductosVenta(any) {
+
+    console.log('listarProductosVenta IN:', any);
+    let productTypeSelect = null;
+    if (any != null && any != undefined) {
+        productTypeSelect = any.getAttribute('typename');
+    }
+
+    const userDataStore = JSON.parse(localStorage.getItem('userData'));
+    const userData = {
+        lastUser: userDataStore.user,
+        productType : productTypeSelect
+    }
+
+    const rawResponse = await fetch('/venta/findbyuser', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData)
+    });
+
+    const responseToken = await rawResponse.json();
+
+    console.log('venta/findbyuser', responseToken);
+    if (rawResponse.ok) {
+        localStorage.setItem('productoVentaByUser', JSON.stringify(responseToken));
+        window.location.href = "/venta/";
+    }
+}
+
+async function agregarProducto(any) {
+    console.log('AGREGAR:', any)
     // Obtener la fila que contiene el botón
-    const fila = any.closest('tr');
+    const fila = any;
 
     // Obtener los atributos personalizados
     const productId = fila.getAttribute('product-id');
@@ -102,8 +178,9 @@ async function agregarProducto(any) {
 }
 
 async function quitarProducto(any) {
+    console.log('QUITAR:', any)
     // Obtener la fila que contiene el botón
-    const fila = any.closest('tr');
+    const fila = any;
 
     // Obtener los atributos personalizados
     const productId = fila.getAttribute('product-id');
@@ -325,7 +402,7 @@ async function limpiarLocalStorareWithOutUser() {
 
 async function nuevaVenta() {
     limpiarLocalStorareWithOutUser()
-    window.location.href = "/venta/";
+    listarProductosVenta();
 }
 
 async function listarReporte() {
@@ -382,8 +459,7 @@ async function signin() {
 
     if (rawResponse.ok) {
         localStorage.setItem('userData', JSON.stringify(responseToken));
-        window.location.href = "/venta/";
-        //loadVenta(responseToken.token);
+        listarProductosVenta();
     }
 }
 
@@ -411,7 +487,7 @@ async function cargarMenuLeft() {
     const userData = JSON.parse(localStorage.getItem('userData'));
     if (userData) {
         if (userData.role === '[ROLE_SUPERADM]') {
-            document.getElementById('limenureplace').outerHTML = '<li class="nav-item"><a class="nav-link" aria-current="page" href="/venta/">Venta</a></li>' +
+            document.getElementById('limenureplace').outerHTML = '<li class="nav-item"><a class="nav-link" aria-current="page" onclick="listarProductosVenta()">Venta</a></li>' +
                 '<li class="nav-item"><a class="nav-link" aria-current="page" href="/product/products">Productos</a></li>' +
                 '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"aria-expanded="false">Reportes</a><ul class="dropdown-menu">' +
                 '<li><a class="dropdown-item" aria-current="page" href="/report/reportsales">Reporte de ventas</a></li><li><a class="dropdown-item" aria-current="page" href="/report/reportsalesprod">Control de ventas producto</a></li></ul></li>' +
@@ -437,6 +513,11 @@ async function cargarMenuLeft() {
         }
 
         if (userData.role === 'ROLE_REPORTE') {
+            document.getElementById('limenureplace').outerHTML =
+                '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"aria-expanded="false">Reportes</a><ul class="dropdown-menu">' +
+                '<li><a class="dropdown-item" aria-current="page" href="/report/reportsales">Reporte de ventas</a></li><li><a class="dropdown-item" aria-current="page" href="/report/reportsalesprod">Control de ventas producto</a></li></ul></li>' +
+                '<li class="nav-item"><a class="nav-link" aria-current="page" href="/report/dashboard">Dashboard</a></li>';
+            document.getElementById('limenureplacerigth').outerHTML = '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Perfil</a><ul class="dropdown-menu"><li><a class="dropdown-item" aria-current="page" href="/">Cerrar session</a></li></ul></li>';
         }
     } else {
         document.getElementById('limenureplace').outerHTML = '<li id="limenureplace" ></li>';
@@ -683,7 +764,7 @@ async function actualizarOrdenPendiente() {
         if (clave !== null && clave !== undefined) {
             const valor = orders[clave];
 
-            const textDisable = valor.state === 'PROCESSED'? 'disabled="true"' : '';
+            const textDisable = valor.state === 'PROCESSED' ? 'disabled="true"' : '';
             let productHtml = '<tr>\n' +
                 '<td>' + valor.ticketNumber + '</td>\n' +
                 '<td>' + valor.totalAmount + '</td>\n' +
@@ -698,7 +779,7 @@ async function actualizarOrdenPendiente() {
                 '</div>' +
                 '</td>' +
                 '<td>\n' +
-                '<button '+ textDisable+' type="button" class="btn btn-warning" id="confirmarentrega' + valor.orderSalesId + '" onclick="confirmarEntrega(' + valor.orderSalesId + ')"> Entregar </button>\n' +
+                '<button ' + textDisable + ' type="button" class="btn btn-warning" id="confirmarentrega' + valor.orderSalesId + '" onclick="confirmarEntrega(' + valor.orderSalesId + ')"> Entregar </button>\n' +
                 '</td>' +
                 '</tr>';
             litadoOrden += productHtml;

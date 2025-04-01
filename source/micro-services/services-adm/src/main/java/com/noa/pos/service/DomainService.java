@@ -14,5 +14,7 @@ public interface DomainService {
 
     public List<DomainDto> getGropupDom(String group);
 
+    public List<DomainDto> getGropupDom(String group, String user);
+
     DomainDto getDomainGroupAndName(String domainGroup, String domainName);
 }

@@ -17,14 +17,14 @@
             <div id="filtertype" class="wrapper">
                 <lu id="listtype" class="tabs-box">
                     <li>
-                        <a class="tabs btn btn-secondary btn-sm" style="border-radius: 20px" th:href="@{'/venta/'}">Todos</a>
+                        <a class="tabs btn btn-secondary btn-sm" style="border-radius: 20px" onclick="listarProductosVenta()">Todos</a>
                     </li>
                     <li th:each="type : ${productstype}" th:name="${type.name}">
                         <a class="tabs btn btn-secondary btn-sm" style="border-radius: 20px" th:href="@{'/venta/filterbytype/'+${type.name}}">[[${type.value}]]</a>
                     </li>
                 </lu>
             </div>
-            <table class="table">
+            <table class="table" id="productosventa">
                 <thead>
                 <tr>
                     <th scope="col">Nombre</th>
@@ -43,8 +43,8 @@
                     <td>Bs[[${p.price}]]</td>
                     <td><img th:src="@{'/product_img/'+${p.image}}" width="50px" height="50px"></td>
                     <td>
-                        <button type="button" class="btn btn-danger" onclick="quitarProducto(this)"> -</button>
-                        <button type="button" class="btn btn-success" onclick="agregarProducto(this)"> +</button>
+                        <button type="button" class="btn btn-danger" onclick="quitarProducto(this)">-</button>
+                        <button type="button" class="btn btn-success" onclick="agregarProducto(this)">+</button>
                     </td>
                 </tr>
                 </tbody>

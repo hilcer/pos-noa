@@ -84,6 +84,7 @@ public class OrderServicesImp implements OrderService {
         }
         order.setState(OrderState.PROCESSED.name());
         order.setLastTime(LocalDateTime.now());
+        order.setLastUser(orderSalesDto.getLastUser());
         orderSalesRepository.save(order);
         return entityToDto(order);
     }
