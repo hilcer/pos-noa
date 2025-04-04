@@ -13,11 +13,14 @@ window.fetch = async function (...args) {
             const userData = JSON.parse(localStorage.getItem('userData'));
             config.headers['Authorization'] = 'Bearer ' + userData.token;
             //config.headers.push({Authorization: 'Bearer '+userData.token});
-            console.log('MODIFICARRRRRRR', config.headers);
         }
     }
     // Llamar al fetch original
     const response = await originalFetch(...args);
+    console.log('RESPUESTA APIS', response);
+    if (response.status === 401) {
+        window.location.href = "/";
+    }
 
     return response; // Retornar la respuesta (modificada o no)
 };
@@ -55,6 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
     reloadGraficoTopProduct();
     actualizarOrdenPendiente();
     dibujarProductosVenta();
+    dibujarProductos();
 });
 
 async function dibujarProductosVenta(any) {
@@ -96,7 +100,6 @@ async function dibujarProductosVenta(any) {
             litadoProductosVenta += productHtml;
         }
     }
-    //document.querySelector('#resumentotal').textContent = 'Total: Bs' + localStorage.getItem('totalPrice');
     document.querySelector('#productosventa tbody').outerHTML = litadoProductosVenta;
 }
 
@@ -130,6 +133,65 @@ async function listarProductosVenta(any) {
         localStorage.setItem('productoVentaByUser', JSON.stringify(responseToken));
         window.location.href = "/venta/";
     }
+}
+
+async function listarProductos(any) {
+
+    console.log('listarProductos IN:', any);
+    let productTypeSelect = null;
+    if (any != null && any != undefined) {
+        productTypeSelect = any.getAttribute('typename');
+    }
+
+    const userDataStore = JSON.parse(localStorage.getItem('userData'));
+    const userData = {
+        lastUser: userDataStore.user,
+        productType : productTypeSelect
+    }
+
+    const rawResponse = await fetch('/product/findbyuser', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData)
+    });
+
+    const responseToken = await rawResponse.json();
+
+    console.log('venta/findbyuser', responseToken);
+    if (rawResponse.ok) {
+        localStorage.setItem('productoByUser', JSON.stringify(responseToken));
+        window.location.href = "/product/";
+    }
+}
+
+async function dibujarProductos(any) {
+    const reponseVenta = JSON.parse(localStorage.getItem('productoByUser'));
+
+    let litadoProductosVenta = '';
+    let contador = 1;
+    for (const clave in reponseVenta.products) {
+        if (clave !== null && clave !== undefined) {
+            const valor = reponseVenta.products[clave];
+            let productHtml = '<tr>\n' +
+                '    <td>' + contador + '</td>\n' +
+                '    <td>' + valor.code + '</td>\n' +
+                '    <td>' + valor.name + '</td>\n' +
+                '    <td>' + valor.productType + '</td>\n' +
+                '    <td>Bs' + valor.price + '</td>\n' +
+                '    <td>' + valor.enabled + '</td>\n' +
+                '    <td><img src="/product_img/' + valor.image + '" width="50px" height="50px"></td>\n' +
+                '    <td>\n' +
+                '        <a href="/product/editproduct/'+ valor.productId +'" class="btn btn-sm btn-secondary">Editar</a>' +
+                '    </td>\n' +
+                '</tr>';
+            litadoProductosVenta += productHtml;
+            contador = contador + 1;
+        }
+    }
+    document.querySelector('#productosbyuser tbody').outerHTML = litadoProductosVenta;
 }
 
 async function agregarProducto(any) {
@@ -460,6 +522,8 @@ async function signin() {
     if (rawResponse.ok) {
         localStorage.setItem('userData', JSON.stringify(responseToken));
         listarProductosVenta();
+    } else {
+        document.getElementById('logininvalidmessage').outerHTML='<div id="logininvalidmessage" class="alert alert-danger">Usuario o contraseña invalido</div>'
     }
 }
 
@@ -488,7 +552,7 @@ async function cargarMenuLeft() {
     if (userData) {
         if (userData.role === '[ROLE_SUPERADM]') {
             document.getElementById('limenureplace').outerHTML = '<li class="nav-item"><a class="nav-link" aria-current="page" onclick="listarProductosVenta()">Venta</a></li>' +
-                '<li class="nav-item"><a class="nav-link" aria-current="page" href="/product/products">Productos</a></li>' +
+                '<li class="nav-item"><a class="nav-link" aria-current="page" onclick="listarProductos()">Productos</a></li>' +
                 '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"aria-expanded="false">Reportes</a><ul class="dropdown-menu">' +
                 '<li><a class="dropdown-item" aria-current="page" href="/report/reportsales">Reporte de ventas</a></li><li><a class="dropdown-item" aria-current="page" href="/report/reportsalesprod">Control de ventas producto</a></li></ul></li>' +
                 '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"aria-expanded="false">Administracion</a><ul class="dropdown-menu">' +
@@ -499,16 +563,17 @@ async function cargarMenuLeft() {
         }
 
         if (userData.role === '[ROLE_ADMIN]') {
-            document.getElementById('limenureplace').outerHTML = '<li class="nav-item"><a class="nav-link" aria-current="page" href="/venta/">Venta</a></li>' +
-                '<li class="nav-item"><a class="nav-link" aria-current="page" href="/product/products">Productos</a></li>' +
+            document.getElementById('limenureplace').outerHTML = '<li class="nav-item"><a class="nav-link" aria-current="page" onclick="listarProductosVenta()">Venta</a></li>' +
+                '<li class="nav-item"><a class="nav-link" aria-current="page" onclick="listarProductos()">Productos</a></li>' +
                 '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"aria-expanded="false">Reportes</a><ul class="dropdown-menu">' +
                 '<li><a class="dropdown-item" aria-current="page" href="/report/reportsales">Reporte de ventas</a></li><li><a class="dropdown-item" aria-current="page" href="/report/reportsalesprod">Control de ventas producto</a></li></ul></li>' +
-                '<li class="nav-item"><a class="nav-link" aria-current="page" href="/report/dashboard">Dashboard</a></li>';
+                '<li class="nav-item"><a class="nav-link" aria-current="page" onclick="ordenesPendientes()">Ordenes pendientes</a></li>' +
+                '<li class="nav-item"><a class="nav-link" aria-current="page" onclick="redireccionarDashboard()">Dashboard</a></li>';
             document.getElementById('limenureplacerigth').outerHTML = '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Perfil</a><ul class="dropdown-menu"><li><a class="dropdown-item" aria-current="page" href="/">Cerrar session</a></li></ul></li>';
         }
 
         if (userData.role === '[ROLE_CAJERO]') {
-            document.getElementById('limenureplace').outerHTML = '<li class="nav-item"><a class="nav-link" aria-current="page" href="/venta/">Venta</a></li>';
+            document.getElementById('limenureplace').outerHTML = '<li class="nav-item"><a class="nav-link" aria-current="page" onclick="listarProductosVenta()">Venta</a></li>';
             document.getElementById('limenureplacerigth').outerHTML = '<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Perfil</a><ul class="dropdown-menu"><li><a class="dropdown-item" aria-current="page" href="/">Cerrar session</a></li></ul></li>';
         }
 

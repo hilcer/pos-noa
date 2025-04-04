@@ -22,6 +22,8 @@ public interface ProductService {
 
     List<ProductDto> findAllEnable(ProductDto user);
 
+    List<ProductDto> findAll(ProductDto user);
+
     //List<ProductDto> findByProductType(String productType);
 
     List<ProductDto> findByProductType(String productType, String user);

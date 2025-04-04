@@ -206,6 +206,11 @@ public class ProductServiceImp implements ProductService {
         }
     }
 
+    public List<ProductDto> findAll(ProductDto user) {
+        var userName = userService.getUserByUser(user.getLastUser());
+        return productRepository.findAll(userName.getCompanyId()).stream().parallel().map(this::entityToDto).toList();
+    }
+
     @Override
     public List<ProductDto> findByProductType(String productType, String user) {
         var userName = userService.getUserByUser(user);

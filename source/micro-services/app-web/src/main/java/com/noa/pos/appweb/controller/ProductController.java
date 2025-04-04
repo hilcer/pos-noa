@@ -2,6 +2,7 @@ package com.noa.pos.appweb.controller;
 
 import com.noa.pos.appweb.config.WebResourcesConfigure;
 import com.noa.pos.dto.ProductDto;
+import com.noa.pos.dto.VentaProductsDto;
 import com.noa.pos.imp.constant.DomainConstant;
 import com.noa.pos.imp.exception.ProductDuplicateException;
 import com.noa.pos.imp.exception.ProductNotFoundException;
@@ -13,6 +14,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -45,9 +47,19 @@ public class ProductController {
     @GetMapping("/")
     public String index(Model model) {
 
-        model.addAttribute("products", productService.getAllProducts());
+        //model.addAttribute("products", productService.getAllProducts());
 
         return "product/list_product";
+    }
+
+    @PostMapping("/findbyuser")
+    public ResponseEntity<?> listaVentaByUSer(@RequestBody ProductDto productDto) {
+
+        var products = productService.findAll(productDto);
+        var productstype = domainService.getGropupDom(DomainConstant.PRODUCT_TYPE, productDto.getLastUser());
+        VentaProductsDto ventaProductsDto = new VentaProductsDto(products, productstype);
+
+        return ResponseEntity.ok(ventaProductsDto);
     }
 
     @GetMapping("/products")
