@@ -12,16 +12,16 @@
             <p class="fs-4">Reporte de ventas</p>
         </div>
         <div class="grid grid-cols-5 grid-rows-5 gap-4 p-3">
-            <form th:action="@{'/report/reportsales?dateFrom='+${dateFrom.toString()}+'&dateTo='+${dateTo.toString()}}" method="get">
+            <form>
                 <label class="form-label">Desde:</label>
                 <input id="fechadesde" name="dateFrom" type="date" th:value="${dateFrom}">
                 <label class="form-label">Hasta:</label>
                 <input id="fechahasta" name="dateTo" type="date" th:value="${dateTo}">
                 <br>
-                <button type="submit" class="btn bg-primary text-white"><i class="fa-solid fa-plus"></i>Filtrar
+                <button class="btn bg-primary text-white" onclick="generarReporte()"><i class="fa-solid fa-plus"></i>Filtrar
                 </button>
-                <a th:href="@{'/report/exportexcel?dateFrom='+${dateFrom.toString()}+'&dateTo='+${dateTo.toString()}}"
-                   class="btn btn-success">Exportar XLS</a>
+                <button class="btn btn-success" onclick="exportarExcel()"><i class="fa-solid fa-plus"></i>Exportar Excel
+                </button>
             </form>
         </div>
         <div class="table-responsive">

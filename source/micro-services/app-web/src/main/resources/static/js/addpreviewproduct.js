@@ -926,3 +926,27 @@ async function obtenerDetallePendiente(clave) {
     }
 }
 
+async function generarReporte(any){
+    const userDataStore = JSON.parse(localStorage.getItem('userData'));
+
+    const userData = {
+        lastUser: userDataStore.user,
+        dateFrom: clave
+    }
+
+    const rawResponse = await fetch('/venta/updateorderprocessed', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData)
+    });
+
+    const responseToken = await rawResponse.json();
+
+    if (rawResponse.ok) {
+        ordenesPendientes()
+    }
+}
+

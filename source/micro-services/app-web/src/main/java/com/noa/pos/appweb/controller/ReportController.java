@@ -35,7 +35,7 @@ public class ReportController {
     private final ProductService productService;
     private final DomainService domainService;
     private final ExportServiceProduct exportServiceProduct;
-    private static final Map<String, String> semanas=  Map.of(
+    private static final Map<String, String> semanas = Map.of(
             "Sunday", "Domingo",
             "Monday", "Lunes",
             "Tuesday", "Martes",
@@ -43,7 +43,7 @@ public class ReportController {
             "Thursday", "Jueves",
             "Friday", "Viernes",
             "Saturday", "Sabado"
-            );
+    );
 
     @Autowired
     public ReportController(final OrderService orderService,
@@ -56,34 +56,32 @@ public class ReportController {
         this.exportServiceProduct = exportServiceProduct;
     }
 
-    @GetMapping("/reportsales")
-    public String reportsales(Model m, @RequestParam(name = "dateFrom", defaultValue = "") String dateFrom,
-                              @RequestParam(name = "dateTo", defaultValue = "") String dateTo,
-                              @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo,
-                              @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
-                              @RequestParam(defaultValue = "") String ch) {
+    @PostMapping("/reportsales")
+    public ResponseEntity<?> reportsales(Model m, @RequestBody ReportOrderSalesPaginatorDto request) {
 
-        if (dateFrom.isEmpty() && dateTo.isEmpty()) {
-            dateFrom = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            dateTo = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        if (request.getDateFrom().isEmpty() && request.getDateTo().isEmpty()) {
+            request.setDateFrom(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+            request.setDateTo(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         }
         Page<OrderSalesEntity> page;
-        page = orderService.searchOrderSalesPagination(pageNo, pageSize, dateFrom, dateTo);
+        page = orderService.searchOrderSalesPagination(request.getPageNo(), request.getPageSize(), request.getDateFrom(), request.getDateTo());
 
         List<OrderSalesEntity> products = page.getContent();
-        m.addAttribute("reportsales", products);
-        m.addAttribute("productsSize", products.size());
-        m.addAttribute("dateFrom", dateFrom);
-        m.addAttribute("dateTo", dateTo);
 
-        m.addAttribute("pageNo", page.getNumber());
-        m.addAttribute("pageSize", pageSize);
-        m.addAttribute("totalElements", page.getTotalElements());
-        m.addAttribute("totalPages", page.getTotalPages());
-        m.addAttribute("isFirst", page.isFirst());
-        m.addAttribute("isLast", page.isLast());
+        var response = ReportOrderSalesPaginatorDto.builder()
+                .reportsales(products)
+                .productsSize(products.size())
+                .dateFrom(request.getDateFrom())
+                .dateTo(request.getDateTo())
+                .pageNo(page.getNumber())
+                .pageSize(request.getPageSize())
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .isFirst(page.isFirst())
+                .isLast(page.isLast()).build();
 
-        return "report/report_sales";
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/reportsalesdetail/{id}")
@@ -133,7 +131,7 @@ public class ReportController {
             throw new RuntimeException(e);
         }
         DashboarReportDto dashboarReportDto = new DashboarReportDto();
-        orderSales.forEach( x -> {
+        orderSales.forEach(x -> {
             x.setDay(semanas.get(x.getDay()));
         });
         dashboarReportDto.setDashboard7DayDtos(orderSales);
@@ -145,12 +143,12 @@ public class ReportController {
     public ResponseEntity<byte[]> downloadExcel(@RequestParam(name = "dateFrom") String dateFrom,
                                                 @RequestParam(name = "dateTo") String dateTo) {
         try {
-            ExportService<OrderSalesDto>  serviceExport = new ExportPdfServiceImp();
+            ExportService<OrderSalesDto> serviceExport = new ExportPdfServiceImp();
             var listOrderSales = orderService.searchOrderSales(dateFrom, dateTo);
 
             var excelbyte = serviceExport.generateReport(listOrderSales);
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Reporte-"+ LocalDateTime.now() +".xlsx")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Reporte-" + LocalDateTime.now() + ".xlsx")
                     .header(HttpHeaders.CONTENT_TYPE, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                     .body(excelbyte);
         } catch (IOException e) {
@@ -161,10 +159,10 @@ public class ReportController {
 
     @GetMapping("/reportsalesprod")
     public String reportsalesProd(Model m, @RequestParam(name = "dateFrom", defaultValue = "") String dateFrom,
-                              @RequestParam(name = "dateTo", defaultValue = "") String dateTo,
-                              @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo,
-                              @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
-                              @RequestParam(defaultValue = "") String ch) {
+                                  @RequestParam(name = "dateTo", defaultValue = "") String dateTo,
+                                  @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo,
+                                  @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
+                                  @RequestParam(defaultValue = "") String ch) {
 
         if (dateFrom.isEmpty() && dateTo.isEmpty()) {
             dateFrom = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -189,7 +187,7 @@ public class ReportController {
 
     @GetMapping("/exportexcelprod")
     public ResponseEntity<byte[]> downloadExcelProd(@RequestParam(name = "dateFrom", defaultValue = "") String dateFrom,
-                                                @RequestParam(name = "dateTo", defaultValue = "") String dateTo) {
+                                                    @RequestParam(name = "dateTo", defaultValue = "") String dateTo) {
         try {
             if (dateFrom.isEmpty() && dateTo.isEmpty()) {
                 dateFrom = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -201,7 +199,7 @@ public class ReportController {
 
             var excelbyte = exportServiceProduct.generateReportByProd(listOrderSales);
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ReporteProd-"+ LocalDateTime.now() +".xlsx")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ReporteProd-" + LocalDateTime.now() + ".xlsx")
                     .header(HttpHeaders.CONTENT_TYPE, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                     .body(excelbyte);
         } catch (IOException e) {
