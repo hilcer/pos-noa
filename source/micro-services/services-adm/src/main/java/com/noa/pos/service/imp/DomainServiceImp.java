@@ -5,7 +5,10 @@ import com.noa.pos.model.entity.DomainEntity;
 import com.noa.pos.model.repository.DomainRepository;
 import com.noa.pos.model.repository.UserRepository;
 import com.noa.pos.service.DomainService;
+import com.noa.pos.service.config.CacheConfig;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,6 +32,10 @@ public class DomainServiceImp implements DomainService {
     }
 
     @Override
+    @CacheEvict(cacheNames = {CacheConfig.CACHE_DOMAIN,
+            CacheConfig.CACHE_DOMAIN_GROUP,
+            CacheConfig.CACHE_DOMAIN_GROUP_LIST,
+            CacheConfig.CACHE_DOMAIN_GROUP_USER_LIST}, allEntries = true)
     public DomainDto mergeDomain(DomainDto user) {
         var entity = domainRepository.save(dtoToEntity(user));
         return entityToDto(entity);
@@ -65,15 +72,18 @@ public class DomainServiceImp implements DomainService {
     }
 
     @Override
+    @Cacheable(cacheNames = CacheConfig.CACHE_DOMAIN_GROUP_LIST, unless = "#result == null")
     public List<DomainDto> getGropupDom(String group) {
         return domainRepository.findByGroupDom(group).stream().parallel().map(this::entityToDto).toList();
     }
 
+    @Cacheable(cacheNames = CacheConfig.CACHE_DOMAIN_GROUP_USER_LIST, unless = "#result == null")
     public List<DomainDto> getGropupDom(String group, String user) {
         var userEntity = userRepository.findByUsername(user);
         return domainRepository.findByGroupDomAndCompanyId(group, userEntity.getCompanyId()).stream().parallel().map(this::entityToDto).toList();
     }
 
+    @Cacheable(cacheNames = CacheConfig.CACHE_DOMAIN_GROUP, unless = "#result == null")
     public DomainDto getDomainGroupAndName(String domainGroup, String domainName) {
         var entity = domainRepository.findByGroupDomAndName(domainGroup, domainName);
         if (entity == null) { return null; }

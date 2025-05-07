@@ -1,5 +1,6 @@
 package com.noa.pos.service;
 
+
 import com.noa.pos.dto.DomainDto;
 
 import java.util.List;

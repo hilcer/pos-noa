@@ -1,8 +1,6 @@
 package com.noa.pos.appweb.controller;
 
-import com.noa.pos.imp.constant.DomainConstant;
 import com.noa.pos.service.CompanyService;
-import com.noa.pos.service.ProductService;
 import com.noa.pos.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

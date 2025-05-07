@@ -1,7 +1,7 @@
 package com.noa.pos.api.controller;
 
-import com.noa.pos.dto.UserDto;
-import com.noa.pos.service.UserService;
+import com.noa.pos.api.dto.UserDto;
+import com.noa.pos.api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

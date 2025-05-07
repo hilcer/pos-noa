@@ -5,17 +5,14 @@ import com.noa.pos.imp.constant.DomainConstant;
 import com.noa.pos.service.DomainService;
 import com.noa.pos.service.OrderService;
 import com.noa.pos.service.ProductService;
-import com.noa.pos.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 @Controller
 @RequestMapping("/venta")

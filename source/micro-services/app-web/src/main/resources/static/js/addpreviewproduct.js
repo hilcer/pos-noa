@@ -636,20 +636,20 @@ async function saveProduct() {
     const formData = new FormData(form); // Recoge automáticamente todos los datos del formulario
 
     const userDataStore = JSON.parse(localStorage.getItem('userData'));
-    formData['lastUser'] = userDataStore.user
+    formData.set('lastUser',userDataStore.user);
 
     try {
+        console.log('request product:', formData);
         const response = await fetch('/product/saveproduct', {
             method: 'POST',
             headers: {},
             body: formData
         });
-
-        if (response.ok) {
-            window.location.href = "/product/products";
-        } else {
-            console.error('Failed to save product:', response.statusText);
-        }
+        // if (response.ok) {
+        //     window.location.href = "/product/products";
+        // } else {
+            console.log('Save product:', response);
+        // }
     } catch (error) {
         console.error('Error:', error);
     }

@@ -5,7 +5,6 @@ import com.noa.pos.dto.OrderSalesDetailDto;
 import com.noa.pos.dto.OrderSalesDto;
 import com.noa.pos.dto.ProductDto;
 import com.noa.pos.imp.constant.DomainConstant;
-import com.noa.pos.model.dto.ReportOrderSalesDetailDto;
 import com.noa.pos.model.dto.ReportOrderSalesProdDto;
 import com.noa.pos.service.*;
 import org.apache.poi.ss.usermodel.Row;
@@ -27,7 +26,7 @@ public class ExportPdfProdServiceImp implements ExportServiceProduct {
 
     private final ProductService productService;
     private final OrderService orderService;
-    private final DomainService domainService;
+    private final DomainService  domainService;
 
     public ExportPdfProdServiceImp(final ProductService productService,
                                    final OrderService orderService,

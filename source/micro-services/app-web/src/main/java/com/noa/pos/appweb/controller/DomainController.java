@@ -1,8 +1,6 @@
 package com.noa.pos.appweb.controller;
 
 import com.noa.pos.dto.DomainDto;
-import com.noa.pos.dto.LoginDto;
-import com.noa.pos.dto.UserDto;
 import com.noa.pos.service.DomainService;
 import com.noa.pos.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;

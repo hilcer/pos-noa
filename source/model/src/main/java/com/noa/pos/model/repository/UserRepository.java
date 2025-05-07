@@ -2,7 +2,6 @@ package com.noa.pos.model.repository;
 
 import com.noa.pos.model.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 

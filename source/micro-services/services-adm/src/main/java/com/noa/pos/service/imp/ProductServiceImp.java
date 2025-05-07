@@ -1,13 +1,10 @@
 package com.noa.pos.service.imp;
 
 import com.noa.pos.dto.ProductDto;
-import com.noa.pos.imp.constant.DomainConstant;
 import com.noa.pos.imp.exception.ProductDuplicateException;
 import com.noa.pos.imp.exception.ProductNotFoundException;
 import com.noa.pos.model.entity.ProductEntity;
-import com.noa.pos.model.repository.DomainRepository;
 import com.noa.pos.model.repository.ProductRepository;
-import com.noa.pos.service.CompanyService;
 import com.noa.pos.service.DomainService;
 import com.noa.pos.service.ProductService;
 import com.noa.pos.service.UserService;
@@ -18,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Service

@@ -1,13 +1,10 @@
 package com.noa.pos.appweb.controller;
 
-import com.noa.pos.dto.DashboarDetailDto;
 import com.noa.pos.dto.OrderSalesDto;
 import com.noa.pos.dto.UserDto;
-import com.noa.pos.imp.constant.DomainConstant;
 import com.noa.pos.model.dto.*;
 import com.noa.pos.model.entity.OrderSalesEntity;
 import com.noa.pos.service.*;
-import com.noa.pos.service.imp.ExportPdfProdServiceImp;
 import com.noa.pos.service.imp.ExportPdfServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,8 +19,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.AbstractMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
